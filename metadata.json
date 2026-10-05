@@ -1,0 +1,6 @@
+{
+  "name": "Afzal Charitable Trust",
+  "description": "Official portal of Afzal Charitable Trust: Uplifting communities across Bangladesh through education, healthcare, poverty relief, social welfare, memberships, and humanitarian initiatives.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
