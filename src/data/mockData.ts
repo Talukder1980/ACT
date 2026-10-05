@@ -1,10 +1,10 @@
 import { Pillar, Notice, Campaign, GiftCardTier, GalleryPhoto } from '../types';
 
 export const TRUST_NAME = "Afzal Charitable Trust";
-export const TRUST_ESTABLISHED = "2018";
+export const TRUST_ESTABLISHED = "2026";
 export const TRUST_MOTTO = "Compassion · Empowerment · Human Dignity";
 export const MEMBERSHIP_FEE_BDT = 250;
-export const TRUST_LOGO_SRC = "/src/assets/images/trust_emblem_logo_1791220901781.jpg";
+export const TRUST_LOGO_SRC = "/src/assets/images/trust_logo_est_2026_1791221984888.jpg";
 
 export const bangladeshDistricts: string[] = [
   'Bagerhat', 'Bandarban', 'Barguna', 'Barishal', 'Bhola', 'Bogura', 'Brahmanbaria', 'Chandpur',

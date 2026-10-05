@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export const TRUST_LOGO_IMAGE = '/src/assets/images/trust_emblem_logo_1791220901781.jpg';
+export const TRUST_LOGO_IMAGE = '/src/assets/images/trust_logo_est_2026_1791221984888.jpg';
 
 interface TrustLogoProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
@@ -30,22 +30,24 @@ export const TrustLogo: React.FC<TrustLogoProps> = ({
 
   const imageClass = `${sizeMap[size]} rounded-full object-cover shadow-2xs border border-amber-400/80 bg-white shrink-0`;
 
-  // Custom Copyright-Free Vector Emblem SVG Fallback
+  // Custom Copyright-Free Vector Emblem SVG Fallback (with EST. 2026)
   const VectorEmblem = (
     <div className={`${sizeMap[size]} rounded-full bg-gradient-to-tr from-emerald-950 via-emerald-800 to-emerald-900 border-2 border-amber-400 flex items-center justify-center shadow-xs shrink-0 relative overflow-hidden`}>
-      <svg viewBox="0 0 100 100" className="w-[85%] h-[85%] text-amber-300" fill="currentColor">
+      <svg viewBox="0 0 100 100" className="w-[88%] h-[88%] text-amber-300" fill="currentColor">
         {/* Outer Ring Stars / Dots */}
         <circle cx="50" cy="50" r="46" fill="none" stroke="#F59E0B" strokeWidth="2.5" strokeDasharray="3 2" />
         <circle cx="50" cy="50" r="41" fill="none" stroke="#FBBF24" strokeWidth="1.5" />
         {/* Rising Sun Arc */}
-        <path d="M35 44 A16 16 0 0 1 65 44 Z" fill="#FDE68A" opacity="0.9" />
+        <path d="M35 40 A16 16 0 0 1 65 40 Z" fill="#FDE68A" opacity="0.9" />
         {/* Open Book of Knowledge / Constitution */}
-        <path d="M30 68 Q50 64 50 74 Q50 64 70 68 L68 56 Q50 52 50 62 Q50 52 32 56 Z" fill="#FFFFFF" />
+        <path d="M30 64 Q50 60 50 70 Q50 60 70 64 L68 52 Q50 48 50 58 Q50 48 32 52 Z" fill="#FFFFFF" />
         {/* Flourishing Sprout / Tree of Dignity */}
-        <path d="M50 34 C44 26 36 32 38 40 C44 40 48 38 50 48 C52 38 56 40 62 40 C64 32 56 26 50 34 Z" fill="#34D399" />
-        <circle cx="50" cy="30" r="3.5" fill="#FBBF24" />
+        <path d="M50 30 C44 22 36 28 38 36 C44 36 48 34 50 44 C52 34 56 36 62 36 C64 28 56 22 50 30 Z" fill="#34D399" />
+        <circle cx="50" cy="26" r="3" fill="#FBBF24" />
         {/* Caring Supporting Hands */}
-        <path d="M26 62 C34 68 44 72 50 72 C56 72 66 68 74 62 C70 66 58 76 50 76 C42 76 30 66 26 62 Z" fill="#F59E0B" />
+        <path d="M26 58 C34 64 44 68 50 68 C56 68 66 64 74 58 C70 62 58 72 50 72 C42 72 30 62 26 58 Z" fill="#F59E0B" />
+        {/* Explicit Inscription: EST. 2026 */}
+        <text x="50" y="87" textAnchor="middle" fontSize="6.5" fontWeight="bold" fill="#FDE68A" letterSpacing="0.8" fontFamily="serif">EST. 2026</text>
       </svg>
     </div>
   );
@@ -76,7 +78,7 @@ export const TrustLogo: React.FC<TrustLogoProps> = ({
             <span className={`text-[10px] sm:text-xs font-sans font-medium uppercase tracking-wider ${
               dark ? 'text-amber-300' : 'text-emerald-800'
             }`}>
-              Compassion · Empowerment · Dignity
+              Est. 2026 · Compassion · Empowerment · Dignity
             </span>
           )}
         </div>
