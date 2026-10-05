@@ -281,7 +281,7 @@ export const OrphanageWidowsBuildingSection: React.FC<OrphanageWidowsBuildingSec
           <div className="lg:col-span-6 relative">
             <div className="relative rounded-3xl overflow-hidden border-2 border-stone-300 shadow-xl bg-stone-900 group">
               <img
-                src="/src/assets/images/orphanage_widows_building_1791209984914.jpg"
+                src="/src/assets/images/building_orphanage_widows_1791220922823.jpg"
                 alt="Sanctuary of Dignity Orphanage and Widows Home construction site in Bangladesh"
                 className="w-full h-80 sm:h-[420px] object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 referrerPolicy="no-referrer"

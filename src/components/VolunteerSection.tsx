@@ -14,17 +14,26 @@ import {
   Printer, 
   Share2, 
   ArrowRight,
-  Stethoscope,
   GraduationCap,
-  Ambulance,
-  Trees,
-  Camera,
-  Scale,
+  HeartPulse,
+  HandCoins,
+  ShieldAlert,
+  Home,
+  Droplet,
+  Landmark,
+  Megaphone,
+  Leaf,
+  Laptop,
+  Globe,
   HandHeart,
+  Compass,
+  TrendingUp,
   Clock,
   BookOpen,
   QrCode,
-  Maximize2
+  Maximize2,
+  CheckSquare,
+  Square
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { VolunteerRegistration } from '../types';
@@ -37,16 +46,136 @@ interface VolunteerSectionProps {
 }
 
 export const VolunteerSection: React.FC<VolunteerSectionProps> = ({ onOpenShare }) => {
-  // Available Focus Areas
+  // 16 Core Areas of Action (Trust Pillars)
   const FOCUS_AREAS = [
-    { id: 'disaster', label: 'Disaster Relief & Flood Rescue', icon: Ambulance, description: 'Rapid field deployment, emergency rations delivery, flood boat operations.' },
-    { id: 'healthcare', label: 'Free Medical Camps & Clinical Care', icon: Stethoscope, description: 'Physician consultations, mobile dispensaries, eye cataract screenings.' },
-    { id: 'orphan-edu', label: 'Orphan Education & Tutoring', icon: GraduationCap, description: 'Academic mentoring, STEM coaching, book distribution for children.' },
-    { id: 'widows-elderly', label: 'Widows Sanctuary & Senior Support', icon: HandHeart, description: 'Elderly companionship, nutritional assistance, care facility aid.' },
-    { id: 'environment', label: 'Afforestation & Clean Water Units', icon: Trees, description: 'Tree seedling planting drives, tube-well setup, climate resilience.' },
-    { id: 'vocational', label: 'Vocational Training & Livelihoods', icon: BookOpen, description: 'Sewing machine training, basic digital literacy, artisan workshops.' },
-    { id: 'legal-aid', label: 'Human Rights & Free Legal Aid', icon: Scale, description: 'Legal counseling for marginalized families, document verification.' },
-    { id: 'media-digital', label: 'Digital Storytelling & Photography', icon: Camera, description: 'Field documentary photography, social reporting, community awareness.' }
+    {
+      id: 'education-scholarships',
+      pillarNo: '01',
+      label: 'Education, Research and Scholarships',
+      category: 'Education',
+      icon: GraduationCap,
+      description: 'Stipends, rural digital library kits, scientific research grants, and mentoring for disadvantaged students.'
+    },
+    {
+      id: 'medical-healthcare',
+      pillarNo: '02',
+      label: 'Medical and Healthcare Assistance',
+      category: 'Health',
+      icon: HeartPulse,
+      description: 'Free clinic outreach, specialist doctor camps, cataract surgery sponsorships, and emergency medicines.'
+    },
+    {
+      id: 'poverty-relief',
+      pillarNo: '03',
+      label: 'Poverty Relief',
+      category: 'Welfare',
+      icon: HandCoins,
+      description: 'Direct family dry food hampers, seasonal flood response dry packs, and micro-livelihood equipment.'
+    },
+    {
+      id: 'vulnerable-persons',
+      pillarNo: '04',
+      label: 'Assistance to Vulnerable Persons',
+      category: 'Welfare',
+      icon: ShieldAlert,
+      description: 'Assistive devices, wheelchair distribution, rehabilitation for neglected widows, and river erosion victims.'
+    },
+    {
+      id: 'old-age-orphanage',
+      pillarNo: '05',
+      label: 'Old Age Home and Orphanage Initiatives',
+      category: 'Welfare',
+      icon: Home,
+      description: 'Loving residential shelter, nutrition, healthcare, and schooling for 80 orphans and 50 destitute widows.'
+    },
+    {
+      id: 'public-utility',
+      pillarNo: '06',
+      label: 'Charitable and General Public Utility',
+      category: 'Welfare',
+      icon: Droplet,
+      description: 'Arsenic-free deep tube-wells, community water filtration plants, and rural public sanitation blocks.'
+    },
+    {
+      id: 'fundraising-endowments',
+      pillarNo: '07',
+      label: 'Fundraising, Property and Endowments',
+      category: 'Global & Society',
+      icon: Landmark,
+      description: 'Ethical endowment administration, Waqf stewardship, transparent donor relations, and audited compliance.'
+    },
+    {
+      id: 'citizen-journalism',
+      pillarNo: '08',
+      label: 'Citizen Journalism',
+      category: 'Global & Society',
+      icon: Megaphone,
+      description: 'Empowering grassroots youth and community voices to report local social challenges and rights violations.'
+    },
+    {
+      id: 'environmental-awareness',
+      pillarNo: '09',
+      label: 'Environmental Awareness',
+      category: 'Welfare',
+      icon: Leaf,
+      description: 'Coastal mangrove tree planting drives, plastic reduction campaigns, river cleaning, and school eco-clubs.'
+    },
+    {
+      id: 'digital-learning-security',
+      pillarNo: '10',
+      label: 'Digital Learning and Security',
+      category: 'Education',
+      icon: Laptop,
+      description: 'Solar-powered coding hubs, cybersecurity awareness workshops, freelance skills, and women-in-tech training.'
+    },
+    {
+      id: 'third-gender-initiatives',
+      pillarNo: '11',
+      label: 'Third gender or Transgender Initiatives',
+      category: 'Empowerment',
+      icon: Users,
+      description: 'Social inclusion circles, dignity stipends, tailoring apprenticeships, and equal healthcare access.'
+    },
+    {
+      id: 'national-international-collab',
+      pillarNo: '12',
+      label: 'National and International Collaboration',
+      category: 'Global & Society',
+      icon: Globe,
+      description: 'Alliances with Bangladeshi diaspora philanthropists, international NGOs, and domestic medical colleges.'
+    },
+    {
+      id: 'volunteering',
+      pillarNo: '13',
+      label: 'Volunteering',
+      category: 'Empowerment',
+      icon: HandHeart,
+      description: 'Rapid emergency disaster mobilization, blood donation drives, and grassroots relief coordination brigades.'
+    },
+    {
+      id: 'drug-awareness',
+      pillarNo: '14',
+      label: 'Advocacy and awareness against drugs',
+      category: 'Health',
+      icon: ShieldCheck,
+      description: 'Anti-substance school seminars, youth sports tournaments, psychological counseling, and rehab support.'
+    },
+    {
+      id: 'beyond-borders',
+      pillarNo: '15',
+      label: 'Beyond Borders',
+      category: 'Global & Society',
+      icon: Compass,
+      description: 'Cross-border humanitarian emergency solidarity, infant nutrition, and blankets for refugee populations.'
+    },
+    {
+      id: 'social-enterprise',
+      pillarNo: '16',
+      label: 'Social Enterprise Development',
+      category: 'Empowerment',
+      icon: TrendingUp,
+      description: 'Nakshi kantha embroidery cooperatives, rural organic poultry farms, and women micro-ventures.'
+    }
   ];
 
   // Expertise Categories
@@ -73,6 +202,7 @@ export const VolunteerSection: React.FC<VolunteerSectionProps> = ({ onOpenShare 
   const [primaryExpertise, setPrimaryExpertise] = useState(EXPERTISE_OPTIONS[0]);
   const [secondarySkills, setSecondarySkills] = useState('');
   const [selectedFocusAreas, setSelectedFocusAreas] = useState<string[]>([FOCUS_AREAS[0].id, FOCUS_AREAS[1].id]);
+  const [pillarFilter, setPillarFilter] = useState<'All' | 'Education' | 'Health' | 'Welfare' | 'Empowerment' | 'Global & Society'>('All');
   const [availability, setAvailability] = useState<'Weekends Only' | 'Emergency / Rapid Deployment' | 'Flexible Weekdays' | 'Remote / Digital Only'>('Weekends Only');
   const [motivationNote, setMotivationNote] = useState('');
   const [agreedToCharter, setAgreedToCharter] = useState(false);
@@ -507,54 +637,115 @@ export const VolunteerSection: React.FC<VolunteerSectionProps> = ({ onOpenShare 
                   </div>
                 </div>
 
-                {/* 3. Specific Focus Areas of Interest */}
+                {/* 3. 16 Core Areas of Action in Volunteer Enlistment Dossier */}
                 <div className="space-y-4 pt-2 border-t border-stone-200">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-900">
-                      <span className="w-5 h-5 rounded-full bg-emerald-800 text-white text-[11px] flex items-center justify-center">3</span>
-                      <span>Select Specific Focus Areas of Interest *</span>
+                      <span className="w-5 h-5 rounded-full bg-emerald-800 text-white text-[11px] flex items-center justify-center font-mono">3</span>
+                      <span>16 Core Areas of Action (Trust Pillars) *</span>
                     </div>
-                    <span className="text-[11px] text-stone-500 font-medium">Select one or more</span>
+                    
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="bg-emerald-100 text-emerald-950 font-bold px-2 py-0.5 rounded-full text-[11px]">
+                        {selectedFocusAreas.length} of 16 Selected
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedFocusAreas(FOCUS_AREAS.map(a => a.id))}
+                        className="text-[11px] font-semibold text-emerald-800 hover:text-emerald-950 underline"
+                      >
+                        Select All 16
+                      </button>
+                      <span className="text-stone-300">·</span>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedFocusAreas([FOCUS_AREAS[0].id])}
+                        className="text-[11px] font-semibold text-stone-500 hover:text-stone-700"
+                      >
+                        Reset
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {FOCUS_AREAS.map(area => {
-                      const Icon = area.icon;
-                      const isSelected = selectedFocusAreas.includes(area.id);
+                  <p className="text-xs text-stone-600">
+                    Select the specific humanitarian action pillars where you wish to deploy your skills, professional background, or volunteer hours.
+                  </p>
+
+                  {/* Category Filter Pills */}
+                  <div className="flex flex-wrap items-center gap-1.5 pb-1">
+                    {(['All', 'Education', 'Health', 'Welfare', 'Empowerment', 'Global & Society'] as const).map(cat => {
+                      const count = cat === 'All' ? FOCUS_AREAS.length : FOCUS_AREAS.filter(a => a.category === cat).length;
                       return (
-                        <div
-                          key={area.id}
-                          onClick={() => toggleFocusArea(area.id)}
-                          className={`p-3.5 rounded-2xl border-2 cursor-pointer transition-all flex items-start gap-3 select-none ${
-                            isSelected 
-                              ? 'border-emerald-800 bg-white shadow-xs ring-1 ring-emerald-800/20' 
-                              : 'border-stone-200 bg-stone-50/60 hover:bg-white text-stone-700'
+                        <button
+                          type="button"
+                          key={cat}
+                          onClick={() => setPillarFilter(cat)}
+                          className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all flex items-center gap-1 ${
+                            pillarFilter === cat
+                              ? 'bg-emerald-800 text-white shadow-2xs'
+                              : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
                           }`}
                         >
-                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
-                            isSelected ? 'bg-emerald-800 text-amber-300' : 'bg-stone-200 text-stone-600'
-                          }`}>
-                            <Icon className="w-4 h-4" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between">
-                              <span className="font-bold text-xs text-stone-900 leading-snug">
-                                {area.label}
-                              </span>
-                              <input
-                                type="checkbox"
-                                checked={isSelected}
-                                onChange={() => {}}
-                                className="rounded text-emerald-800 focus:ring-emerald-700 w-4 h-4 ml-2"
-                              />
-                            </div>
-                            <p className="text-[11px] text-stone-500 mt-0.5 leading-snug line-clamp-2">
-                              {area.description}
-                            </p>
-                          </div>
-                        </div>
+                          <span>{cat}</span>
+                          <span className={`text-[9px] px-1 rounded-full ${pillarFilter === cat ? 'bg-emerald-950 text-amber-300' : 'bg-stone-200 text-stone-700'}`}>
+                            {count}
+                          </span>
+                        </button>
                       );
                     })}
+                  </div>
+
+                  {/* 16 Core Pillars Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[480px] overflow-y-auto pr-1">
+                    {FOCUS_AREAS
+                      .filter(area => pillarFilter === 'All' || area.category === pillarFilter)
+                      .map(area => {
+                        const Icon = area.icon;
+                        const isSelected = selectedFocusAreas.includes(area.id);
+                        return (
+                          <div
+                            key={area.id}
+                            onClick={() => toggleFocusArea(area.id)}
+                            className={`p-3.5 rounded-2xl border-2 cursor-pointer transition-all flex items-start gap-3 select-none ${
+                              isSelected 
+                                ? 'border-emerald-800 bg-white shadow-xs ring-1 ring-emerald-800/20' 
+                                : 'border-stone-200 bg-stone-50/70 hover:bg-white text-stone-700'
+                            }`}
+                          >
+                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                              isSelected ? 'bg-emerald-800 text-amber-300' : 'bg-stone-200 text-stone-600'
+                            }`}>
+                              <Icon className="w-4 h-4" />
+                            </div>
+
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between gap-1">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-100 text-amber-950 border border-amber-200">
+                                    Pillar {area.pillarNo}
+                                  </span>
+                                  <span className="text-[9px] font-sans font-medium text-stone-500 uppercase tracking-wide">
+                                    {area.category}
+                                  </span>
+                                </div>
+                                <input
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={() => {}}
+                                  className="rounded text-emerald-800 focus:ring-emerald-700 w-4 h-4 shrink-0 pointer-events-none"
+                                />
+                              </div>
+
+                              <h5 className="font-bold text-xs text-stone-900 leading-snug mt-1">
+                                {area.label}
+                              </h5>
+                              <p className="text-[11px] text-stone-500 mt-0.5 leading-snug line-clamp-2">
+                                {area.description}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
                   </div>
                 </div>
 

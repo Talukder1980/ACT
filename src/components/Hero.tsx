@@ -115,8 +115,8 @@ export const Hero: React.FC<HeroProps> = ({
           <div className="lg:col-span-5 relative">
             <div className="relative rounded-2xl overflow-hidden border border-stone-300 shadow-xl bg-stone-100 group">
               <img
-                src="/src/assets/images/hero_community_empowerment_1791208356769.jpg"
-                alt="Afzal Charitable Trust humanitarian community education drive in Bangladesh"
+                src="/src/assets/images/hero_humanitarian_bangladesh_1791220911416.jpg"
+                alt="Afzal Charitable Trust humanitarian community relief and education in Bangladesh"
                 className="w-full h-80 sm:h-96 object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                 referrerPolicy="no-referrer"
               />

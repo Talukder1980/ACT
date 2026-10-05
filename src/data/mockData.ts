@@ -4,7 +4,7 @@ export const TRUST_NAME = "Afzal Charitable Trust";
 export const TRUST_ESTABLISHED = "2018";
 export const TRUST_MOTTO = "Compassion · Empowerment · Human Dignity";
 export const MEMBERSHIP_FEE_BDT = 250;
-export const TRUST_LOGO_SRC = "/src/assets/images/trust_official_logo_1791209319086.jpg";
+export const TRUST_LOGO_SRC = "/src/assets/images/trust_emblem_logo_1791220901781.jpg";
 
 export const bangladeshDistricts: string[] = [
   'Bagerhat', 'Bandarban', 'Barguna', 'Barishal', 'Bhola', 'Bogura', 'Brahmanbaria', 'Chandpur',
@@ -356,7 +356,7 @@ export const GALLERY_PHOTOS: GalleryPhoto[] = [
     category: 'Education',
     location: 'Baniachong, Habiganj',
     date: 'February 2026',
-    imageSrc: '/src/assets/images/hero_community_empowerment_1791208356769.jpg',
+    imageSrc: '/src/assets/images/hero_humanitarian_bangladesh_1791220911416.jpg',
     caption: 'Volunteer educators guiding village students with freshly provided STEM textbooks and digital learning kits in an open pavilion.',
     beneficiaryImpact: '140 Students Equipped'
   },
@@ -366,7 +366,7 @@ export const GALLERY_PHOTOS: GalleryPhoto[] = [
     category: 'Healthcare',
     location: 'Razarhat, Kurigram',
     date: 'January 2026',
-    imageSrc: '/src/assets/images/project_medical_relief_1791208375776.jpg',
+    imageSrc: '/src/assets/images/medical_camp_bangladesh_1791220934334.jpg',
     caption: 'Dedicated doctors performing cardiac screenings, diabetes tests, and distribution of essential medicines to elderly villagers.',
     beneficiaryImpact: '680 Elderly & Children Treated'
   },
@@ -376,7 +376,7 @@ export const GALLERY_PHOTOS: GalleryPhoto[] = [
     category: 'Empowerment',
     location: 'Tongi, Gazipur',
     date: 'March 2026',
-    imageSrc: '/src/assets/images/project_vocational_skills_1791208393498.jpg',
+    imageSrc: '/src/assets/images/vocational_training_center_1791220945792.jpg',
     caption: 'Third-gender and marginalized youths learning digital graphic skills and garment fabrication for independent sustainable livelihoods.',
     beneficiaryImpact: '45 Trainees Graduated'
   },
@@ -386,7 +386,7 @@ export const GALLERY_PHOTOS: GalleryPhoto[] = [
     category: 'Poverty Relief',
     location: 'Gaibandha River Islands',
     date: 'December 2025',
-    imageSrc: '/src/assets/images/project_winter_poverty_aid_1791208410622.jpg',
+    imageSrc: '/src/assets/images/winter_poverty_aid_1791220961101.jpg',
     caption: 'Distribution of thick thermal blankets and nutrient-rich food packs to river erosion affected families facing severe winter cold.',
     beneficiaryImpact: '1,200 Families Supported'
   }
