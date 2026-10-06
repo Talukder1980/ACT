@@ -76,6 +76,20 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     'giftcards.title': 'Dedicated Charitable Gift Cards',
     'giftcards.subtitle': 'Honor loved ones with purposeful giving from $5 to $100 across 6 distinct humanitarian tiers with authentic QR vouchers.',
 
+    // Interactive Impact Counter
+    'impact.title': 'Live Humanitarian Impact Counter',
+    'impact.subtitle': 'Real-time estimation of lives touched and families sustained through mobilized community donations.',
+    'impact.modeTotal': 'Current Mobilized Impact',
+    'impact.modeSimulator': 'Interactive Impact Simulator',
+    'impact.families': 'Families Nourished (1 Month)',
+    'impact.lives': 'Estimated Lives Touched',
+    'impact.medical': 'Medical Screenings & Surgeries',
+    'impact.education': 'Student Education Months',
+    'impact.water': 'Liters of Safe Drinking Water',
+    'impact.sliderLabel': 'Simulate Your Gift Amount:',
+    'impact.donateNow': 'Donate This Amount to Transform Lives',
+    'impact.transparencyNote': 'Cost Equivalency: ৳1,800 feeds 1 family for 1 month; ৳400 delivers direct essential relief to 1 individual; ৳1,200 funds clinical medicine & diagnostics; ৳800 supports 1 student month.',
+
     // Common Buttons & Badges
     'btn.print': 'Print',
     'btn.share': 'Share',
@@ -150,6 +164,20 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     // Gift Cards
     'giftcards.title': 'উৎসর্গীকৃত মানবিক উপহার কার্ড',
     'giftcards.subtitle': '$৫ থেকে $১০০ পর্যন্ত ৬টি স্বতন্ত্র মানবিক স্তরে প্রিয়জনদের সম্মান জানাতে তাৎক্ষণিক কিউআর ভাউচার উপহার দিন।',
+
+    // Interactive Impact Counter
+    'impact.title': 'লাইভ মানবিক প্রভাব ও উপকারভোগী কাউন্টার',
+    'impact.subtitle': 'সংগৃহীত অনুদানের ভিত্তিতে উপকৃত পরিবার ও মানুষের সংখ্যার তাৎক্ষণিক হিসাব।',
+    'impact.modeTotal': 'বর্তমানে সংগৃহীত মোট প্রভাব',
+    'impact.modeSimulator': 'অনুদান প্রভাব সিমুলেটর',
+    'impact.families': 'পরিবারকে খাদ্য সহায়তা (১ মাস)',
+    'impact.lives': 'উপকৃত মানুষের আনুমানিক সংখ্যা',
+    'impact.medical': 'চিকিৎসা সেবা ও চোখের ছানি অপারেশন',
+    'impact.education': 'শিক্ষার্থীদের মাসিক শিক্ষা সহায়তা',
+    'impact.water': 'নিরাপদ খাবার পানি (লিটার)',
+    'impact.sliderLabel': 'আপনার অনুদানের পরিমাণ নির্ধারণ করুন:',
+    'impact.donateNow': 'এই পরিমাণ অনুদান দিন',
+    'impact.transparencyNote': 'মূল্য সমতা: ৳১,৮০০ ১টি পরিবারকে ১ মাসের খাদ্য দেয়; ৳৪০০ ১ জনের প্রত্যক্ষ জরুরি ত্রাণ; ৳১,২০০ চিকিৎসা ও ওষুধ; ৳৮০০ ১ জন শিক্ষার্থীর মাসিক খরচ।',
 
     // Common Buttons & Badges
     'btn.print': 'প্রিন্ট করুন',
@@ -226,6 +254,20 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     'giftcards.title': 'Wohltätige Geschenkkarten',
     'giftcards.subtitle': 'Schenken Sie mit Sinn von $5 bis $100 in 6 humanitären Stufen mit offiziellem QR-Zertifikat.',
 
+    // Interactive Impact Counter
+    'impact.title': 'Live-Wirkungszähler & Hilfe-Schätzung',
+    'impact.subtitle': 'Echtzeit-Berechnung der erreichten Menschen und unterstützten Familien durch Spenden.',
+    'impact.modeTotal': 'Bisher mobilisierte Wirkung',
+    'impact.modeSimulator': 'Interaktiver Spenden-Simulator',
+    'impact.families': 'Versorgte Familien (1 Monat)',
+    'impact.lives': 'Erreichte Menschenleben',
+    'impact.medical': 'Medizinische Untersuchungen & Behandlungen',
+    'impact.education': 'Monate Schulbildung gefördert',
+    'impact.water': 'Liter sicheres Trinkwasser',
+    'impact.sliderLabel': 'Simulieren Sie Ihren Spendenbetrag:',
+    'impact.donateNow': 'Diesen Betrag spenden & Hoffnung schenken',
+    'impact.transparencyNote': 'Kostenmodell: ৳1.800 ernährt 1 Familie 1 Monat; ৳400 sichert direkte Nothilfe für 1 Person; ৳1.200 finanziert Medikamente; ৳800 deckt 1 Monat Schulbildung.',
+
     // Common Buttons & Badges
     'btn.print': 'Drucken',
     'btn.share': 'Teilen',
@@ -300,6 +342,20 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     // Gift Cards
     'giftcards.title': 'Cartes Cadeaux Caritatives',
     'giftcards.subtitle': 'Offrez un geste porteur de sens de 5$ à 100$ parmi 6 échelons humanitaires avec certificat QR.',
+
+    // Interactive Impact Counter
+    'impact.title': 'Compteur d’Impact Humanitaire en Direct',
+    'impact.subtitle': 'Estimation en temps réel des vies transformées et des familles soutenues grâce aux dons.',
+    'impact.modeTotal': 'Impact total mobilisé',
+    'impact.modeSimulator': 'Simulateur de don interactif',
+    'impact.families': 'Familles nourries (1 mois)',
+    'impact.lives': 'Vies touchées estimées',
+    'impact.medical': 'Consultations médicales et soins',
+    'impact.education': 'Mois de scolarité financés',
+    'impact.water': 'Litres d’eau potable sécurisée',
+    'impact.sliderLabel': 'Simulez le montant de votre don :',
+    'impact.donateNow': 'Faire ce don pour transformer des vies',
+    'impact.transparencyNote': 'Modèle de coût : ৳1 800 nourrit 1 famille pendant 1 mois ; ৳400 fournit une aide directe essentielle ; ৳1 200 finance des soins médicaux ; ৳800 soutient 1 mois d’école.',
 
     // Common Buttons & Badges
     'btn.print': 'Imprimer',
@@ -376,6 +432,20 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     'giftcards.title': '慈善ギフトカードプログラム',
     'giftcards.subtitle': '$5から$100まで、愛する人の名において意義ある支援を届ける6つの人道支援ギフト。',
 
+    // Interactive Impact Counter
+    'impact.title': '人道支援インパクトカウンター',
+    'impact.subtitle': '集まった寄付金によって支えられた家族と人々の数をリアルタイムで推計します。',
+    'impact.modeTotal': '現在の累計支援実績',
+    'impact.modeSimulator': '寄付インパクト・シミュレーター',
+    'impact.families': '食糧支援を受けた世帯数 (1ヶ月分)',
+    'impact.lives': '支援が届いた推定人数',
+    'impact.medical': '医療受診・白内障手術支援件数',
+    'impact.education': '就学支援・奨学金月数',
+    'impact.water': '安全な飲料水の供給量 (リットル)',
+    'impact.sliderLabel': '寄付金額をシミュレーション:',
+    'impact.donateNow': 'この金額で支援を実行する',
+    'impact.transparencyNote': 'コスト算定基準：৳1,800で1世帯の1ヶ月分の食糧パック、৳400で1人への直接緊急支援、৳1,200で医療検査・医薬品、৳800で1人分の月間就学支援を賄います。',
+
     // Common Buttons & Badges
     'btn.print': '印刷する',
     'btn.share': '共有する',
@@ -450,6 +520,20 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     // Gift Cards
     'giftcards.title': '의미 있는 자선 기프트카드',
     'giftcards.subtitle': '$5부터 $100까지 소중한 사람의 이름으로 6가지 인도주의 구호에 동참하는 공식 QR 카드.',
+
+    // Interactive Impact Counter
+    'impact.title': '실시간 인도주의 구호 성과 카운터',
+    'impact.subtitle': '모금된 후원금을 바탕으로 희망을 되찾은 이웃과 가정의 수를 실시간으로 산출합니다.',
+    'impact.modeTotal': '현재까지 모금된 총 구호 성과',
+    'impact.modeSimulator': '인터랙티브 후원 시뮬레이터',
+    'impact.families': '식량 지원 가정 수 (1개월분)',
+    'impact.lives': '도움이 닿은 추정 인원',
+    'impact.medical': '무료 진료 및 백내장 수술 지원 건수',
+    'impact.education': '장학금 및 학업 지원 개월 수',
+    'impact.water': '안전한 식수 공급량 (리터)',
+    'impact.sliderLabel': '희망 후원 금액 시뮬레이션:',
+    'impact.donateNow': '이 금액으로 구호 활동에 동참하기',
+    'impact.transparencyNote': '비용 환산 기준: ৳1,800은 1가구의 1개월치 필수 식량, ৳400은 1인 직접 긴급 구호, ৳1,200은 진료 및 의약품, ৳800은 1명 학생의 월간 학업 지원에 해당합니다.',
 
     // Common Buttons & Badges
     'btn.print': '인쇄하기',

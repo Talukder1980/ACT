@@ -17,6 +17,7 @@ import { INITIAL_CAMPAIGNS, INITIAL_RECENT_DONORS } from '../data/mockData';
 import { Campaign, DonorContribution } from '../types';
 import { generateQrDataUrl } from '../utils/qrGenerator';
 import { TrustLogo } from './TrustLogo';
+import { ImpactCounter } from './ImpactCounter';
 
 interface DonationTrackerProps {
   onOpenShare: (title: string, text: string) => void;
@@ -61,6 +62,13 @@ export const DonationTracker: React.FC<DonationTrackerProps> = ({
 
   const handleDonateClick = (campaign: Campaign) => {
     setActiveCampaignForDonation(campaign);
+    setReceiptData(null);
+  };
+
+  const handleDonateFromSimulator = (amountBDT: number) => {
+    setDonationAmount(amountBDT);
+    setCustomAmount(amountBDT.toString());
+    setActiveCampaignForDonation(campaigns[0]);
     setReceiptData(null);
   };
 
@@ -217,6 +225,13 @@ export const DonationTracker: React.FC<DonationTrackerProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Live Humanitarian Impact Counter & Interactive Beneficiary Estimator */}
+        <ImpactCounter
+          totalRaisedBDT={totalRaisedOverall}
+          currency={currency}
+          onDonateWithAmount={handleDonateFromSimulator}
+        />
 
         {/* Campaign Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
