@@ -134,6 +134,11 @@ export const Footer: React.FC<FooterProps> = ({
                   Charitable Gift Cards ($5 - $100)
                 </a>
               </li>
+              <li>
+                <a href="#tax-benefits" className="hover:text-amber-300 transition-colors font-medium">
+                  Tax Benefits for Donors (15% NBR Rebate)
+                </a>
+              </li>
               <li className="pt-2 border-t border-stone-800">
                 <button
                   onClick={() => openLegal('privacy')}

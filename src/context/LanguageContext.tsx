@@ -41,6 +41,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     'nav.volunteer': 'Volunteer Corps Enlistment',
     'nav.notices': 'Trust Notice Board & Gazettes',
     'nav.gallery': 'Documentary Photo Gallery',
+    'nav.taxBenefits': 'Tax Benefits for Donors',
     'nav.language': 'Language',
 
     // Hero Section
@@ -130,6 +131,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     'nav.volunteer': 'স্বেচ্ছাসেবক হিসেবে যোগদান',
     'nav.notices': 'ট্রাস্ট নোটিশ বোর্ড ও গেজেট',
     'nav.gallery': 'ডকুমেন্টারি ফটো গ্যালারি',
+    'nav.taxBenefits': 'কর সুবিধা ও কর রেয়াত (১৫%)',
     'nav.language': 'ভাষা',
 
     // Hero Section
@@ -219,6 +221,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     'nav.volunteer': 'Freiwilligen-Registrierung',
     'nav.notices': 'Mitteilungen & Berichte',
     'nav.gallery': 'Fotogalerie',
+    'nav.taxBenefits': 'Steuervorteile für Spender (15% NBR-Rabatt)',
     'nav.language': 'Sprache',
 
     // Hero Section
@@ -308,6 +311,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     'nav.volunteer': 'Rejoindre les Bénévoles',
     'nav.notices': 'Avis Officiels & Gazette',
     'nav.gallery': 'Galerie Documentaire',
+    'nav.taxBenefits': 'Avantages Fiscaux pour Donateurs (15% NBR)',
     'nav.language': 'Langue',
 
     // Hero Section
@@ -397,6 +401,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     'nav.volunteer': 'ボランティア登録',
     'nav.notices': '公式公告・活動報告',
     'nav.gallery': '活動写真ギャラリー',
+    'nav.taxBenefits': '寄付金控除・税制優遇措置 (15%控除)',
     'nav.language': '言語',
 
     // Hero Section
@@ -486,6 +491,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     'nav.volunteer': '자원봉사단 등록',
     'nav.notices': '공식 공지사항 및 활동보고',
     'nav.gallery': '활동 사진 갤러리',
+    'nav.taxBenefits': '기부자 세제 혜택 (15% 세액공제)',
     'nav.language': '언어',
 
     // Hero Section

@@ -12,6 +12,7 @@ import { OrphanageWidowsBuildingSection } from './components/OrphanageWidowsBuil
 import { MembershipSection } from './components/MembershipSection';
 import { NoticeBoard } from './components/NoticeBoard';
 import { DonationTracker } from './components/DonationTracker';
+import { TaxBenefitsSection } from './components/TaxBenefitsSection';
 import { PhotoGallery } from './components/PhotoGallery';
 import { GiftCardsSection } from './components/GiftCardsSection';
 import { VolunteerSection } from './components/VolunteerSection';
@@ -122,7 +123,13 @@ export default function App() {
           onOpenQr={handleOpenQr}
         />
 
-        {/* 7. Documentary Photo Gallery */}
+        {/* 7. Tax Benefits for Donors (NBR Bangladesh Statutory Rebate & Calculator) */}
+        <TaxBenefitsSection
+          onOpenDonate={(amt) => handleScrollTo('donations')}
+          onOpenShare={handleOpenShare}
+        />
+
+        {/* 8. Documentary Photo Gallery */}
         <PhotoGallery
           onOpenShare={handleOpenShare}
         />

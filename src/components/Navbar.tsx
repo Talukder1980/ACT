@@ -17,7 +17,8 @@ import {
   ShieldCheck,
   Phone,
   Lock,
-  Scale
+  Scale,
+  Receipt
 } from 'lucide-react';
 import { TrustLogo } from './TrustLogo';
 import { useLanguage } from '../context/LanguageContext';
@@ -93,6 +94,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           href: '#membership',
           icon: Award,
           description: 'Official member registry, digital ID, and authenticated certificate.'
+        },
+        {
+          id: 'tax-benefits',
+          label: t('nav.taxBenefits', 'Tax Benefits for Donors'),
+          href: '#tax-benefits',
+          icon: Receipt,
+          description: '15% NBR tax rebate on donations under Bangladesh Income Tax Act 2023.',
+          badge: '15% Rebate'
         }
       ]
     },
