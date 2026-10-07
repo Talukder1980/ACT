@@ -12,7 +12,6 @@ import {
   Info,
   CheckCircle2
 } from 'lucide-react';
-import { useLanguage } from '../context/LanguageContext';
 
 interface ImpactCounterProps {
   totalRaisedBDT: number;
@@ -25,7 +24,6 @@ export const ImpactCounter: React.FC<ImpactCounterProps> = ({
   currency,
   onDonateWithAmount
 }) => {
-  const { t } = useLanguage();
   const [mode, setMode] = useState<'total' | 'simulator'>('total');
   const [simulatedBDT, setSimulatedBDT] = useState<number>(5000);
   const [showCostModel, setShowCostModel] = useState<boolean>(false);
@@ -70,10 +68,10 @@ export const ImpactCounter: React.FC<ImpactCounterProps> = ({
             </span>
           </div>
           <h3 className="font-serif font-bold text-xl sm:text-2xl text-stone-900">
-            {t('impact.title', 'Live Humanitarian Impact Counter')}
+            Live Humanitarian Impact Counter
           </h3>
           <p className="text-xs sm:text-sm text-stone-600 mt-0.5">
-            {t('impact.subtitle', 'Real-time estimation of lives touched and families sustained through mobilized community donations.')}
+            Real-time estimation of lives touched and families sustained through mobilized community donations.
           </p>
         </div>
 
@@ -89,7 +87,7 @@ export const ImpactCounter: React.FC<ImpactCounterProps> = ({
             }`}
           >
             <TrendingUp className="w-3.5 h-3.5 text-amber-300" />
-            <span>{t('impact.modeTotal', 'Current Mobilized Impact')}</span>
+            <span>Current Mobilized Impact</span>
           </button>
 
           <button
@@ -102,7 +100,7 @@ export const ImpactCounter: React.FC<ImpactCounterProps> = ({
             }`}
           >
             <Sliders className="w-3.5 h-3.5 text-stone-900" />
-            <span>{t('impact.modeSimulator', 'Interactive Gift Simulator')}</span>
+            <span>Interactive Gift Simulator</span>
           </button>
         </div>
       </div>
@@ -113,7 +111,7 @@ export const ImpactCounter: React.FC<ImpactCounterProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <span className="text-xs font-bold text-stone-700 block">
-                {t('impact.sliderLabel', 'Simulate Your Gift Amount:')}
+                Simulate Your Gift Amount:
               </span>
               <span className="text-[11px] text-stone-500">
                 Drag the slider or click a preset to see the immediate transformation:
@@ -171,7 +169,7 @@ export const ImpactCounter: React.FC<ImpactCounterProps> = ({
               className="w-full sm:w-auto px-6 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs hover:scale-[1.01]"
             >
               <Heart className="w-4 h-4 text-rose-300 fill-rose-300" />
-              <span>{t('impact.donateNow', 'Donate This Amount to Transform Lives')} ({formatAmount(simulatedBDT)})</span>
+              <span>Donate This Amount to Transform Lives ({formatAmount(simulatedBDT)})</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -196,7 +194,7 @@ export const ImpactCounter: React.FC<ImpactCounterProps> = ({
               {familiesHelped.toLocaleString()}
             </div>
             <h4 className="text-xs font-bold text-stone-800 mt-1 leading-snug">
-              {t('impact.families', 'Families Nourished (1 Month)')}
+              Families Nourished (1 Month)
             </h4>
             <p className="text-[11px] text-stone-500 mt-1 leading-relaxed">
               Complete emergency hampers with rice, lentils, edible oil, and salt.
@@ -219,7 +217,7 @@ export const ImpactCounter: React.FC<ImpactCounterProps> = ({
               {livesTouched.toLocaleString()}
             </div>
             <h4 className="text-xs font-bold text-stone-800 mt-1 leading-snug">
-              {t('impact.lives', 'Estimated Lives Touched')}
+              Estimated Lives Touched
             </h4>
             <p className="text-[11px] text-stone-500 mt-1 leading-relaxed">
               Children, destitute seniors, and flood victims aided across 64 districts.
@@ -242,7 +240,7 @@ export const ImpactCounter: React.FC<ImpactCounterProps> = ({
               {medicalScreenings.toLocaleString()}
             </div>
             <h4 className="text-xs font-bold text-stone-800 mt-1 leading-snug">
-              {t('impact.medical', 'Medical Screenings & Care')}
+              Medical Screenings & Care
             </h4>
             <p className="text-[11px] text-stone-500 mt-1 leading-relaxed">
               Doctor consultations, cataract eye checks, and free essential medicines.
@@ -265,7 +263,7 @@ export const ImpactCounter: React.FC<ImpactCounterProps> = ({
               {educationMonths.toLocaleString()}
             </div>
             <h4 className="text-xs font-bold text-stone-800 mt-1 leading-snug">
-              {t('impact.education', 'Student Education Months')}
+              Student Education Months
             </h4>
             <p className="text-[11px] text-stone-500 mt-1 leading-relaxed">
               Tuition stipends, digital classroom access, and academic stationery.
@@ -288,7 +286,7 @@ export const ImpactCounter: React.FC<ImpactCounterProps> = ({
               {waterLiters.toLocaleString()} L
             </div>
             <h4 className="text-xs font-bold text-stone-800 mt-1 leading-snug">
-              {t('impact.water', 'Liters of Safe Drinking Water')}
+              Liters of Safe Drinking Water
             </h4>
             <p className="text-[11px] text-stone-500 mt-1 leading-relaxed">
               Deep tube-well yields preventing arsenic and waterborne illness.
@@ -313,7 +311,7 @@ export const ImpactCounter: React.FC<ImpactCounterProps> = ({
         {showCostModel && (
           <div className="mt-3 p-4 bg-stone-100 rounded-2xl text-xs text-stone-700 space-y-2 animate-in fade-in duration-150">
             <p className="font-semibold text-stone-900">
-              {t('impact.transparencyNote', 'Cost Equivalency: ৳1,800 feeds 1 family for 1 month; ৳400 delivers direct essential relief to 1 individual; ৳1,200 funds clinical medicine & diagnostics; ৳800 supports 1 student month.')}
+              Cost Equivalency: ৳1,800 feeds 1 family for 1 month; ৳400 delivers direct essential relief to 1 individual; ৳1,200 funds clinical medicine & diagnostics; ৳800 supports 1 student month.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 pt-1 text-[11px] text-stone-600">
               <div className="flex items-center gap-1.5">

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Award, Heart, QrCode, ArrowDown, ShieldCheck, Users, Sparkles, CheckCircle2 } from 'lucide-react';
 import { generateQrDataUrl } from '../utils/qrGenerator';
 import { TrustLogo } from './TrustLogo';
-import { useLanguage } from '../context/LanguageContext';
 
 interface HeroProps {
   onOpenMembership: () => void;
@@ -15,7 +14,6 @@ export const Hero: React.FC<HeroProps> = ({
   onOpenDonate,
   onOpenQr
 }) => {
-  const { t } = useLanguage();
   const [heroQrUrl, setHeroQrUrl] = useState<string>('');
 
   useEffect(() => {
@@ -31,12 +29,12 @@ export const Hero: React.FC<HeroProps> = ({
         <div className="flex flex-wrap items-center gap-2 text-xs text-stone-600 mb-4">
           <span className="inline-flex items-center gap-1.5 font-semibold text-emerald-950 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200/70">
             <TrustLogo size="xs" />
-            <span>{t('trust.registered', 'Registered Non-Profit Trust · Bangladesh')}</span>
+            <span>Registered Non-Profit Trust · Bangladesh</span>
           </span>
           <span aria-hidden="true" className="text-stone-400">·</span>
-          <span>{t('trust.est', 'Reg. Est. 2026')}</span>
+          <span>Reg. Est. 2026</span>
           <span aria-hidden="true" className="text-stone-400">·</span>
-          <span>{t('nav.pillars', '16 Humanitarian Focus Areas')}</span>
+          <span>16 Humanitarian Focus Areas</span>
           <span aria-hidden="true" className="text-stone-400">·</span>
           <span className="text-amber-700 font-medium">Annual Audit Certified</span>
         </div>
@@ -45,7 +43,7 @@ export const Hero: React.FC<HeroProps> = ({
         <div className="bg-amber-50/90 border border-amber-300 rounded-xl px-3.5 py-2 mb-6 flex items-center gap-2 text-xs text-amber-950 shadow-2xs">
           <ShieldCheck className="w-4 h-4 text-emerald-800 shrink-0" />
           <span>
-            <strong className="text-emerald-950 font-bold">Important Trust Advisory:</strong> {t('trust.officialDirect', 'Supporters will send their gifts, building endowments, and donations through this official website only.')}
+            <strong className="text-emerald-950 font-bold">Important Trust Advisory:</strong> Supporters will send their gifts, building endowments, and donations <strong>through this official website only</strong>. The Trust does not authorize any third-party collectors or personal cash agents.
           </span>
         </div>
 
@@ -54,11 +52,11 @@ export const Hero: React.FC<HeroProps> = ({
           {/* Left Column: Narrative & Calls to Action (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-stone-900 tracking-tight leading-[1.15] text-balance">
-              {t('hero.headline', 'Empowering Vulnerable Lives with Compassion, Dignity & Lasting Opportunity')}
+              Empowering Vulnerable Lives with Compassion, Dignity & Lasting Opportunity
             </h1>
 
             <p className="text-base sm:text-lg text-stone-700 leading-relaxed max-w-2xl font-normal">
-              {t('hero.subheadline', 'Afzal Charitable Trust is an independent humanitarian organization operating across Bangladesh. From rural scholarship labs and mobile healthcare to winter relief and transgender social enterprise, we build an inclusive society where no community is left behind.')}
+              Afzal Charitable Trust is an independent humanitarian organization operating across Bangladesh. From rural scholarship labs and mobile healthcare to winter relief and transgender social enterprise, we build an inclusive society where no community is left behind.
             </p>
 
             {/* Key Action Buttons */}
@@ -68,7 +66,7 @@ export const Hero: React.FC<HeroProps> = ({
                 className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold text-sm shadow-sm transition-all hover:scale-[1.02] active:scale-95 border border-amber-500"
               >
                 <Award className="w-4 h-4 text-emerald-950" />
-                <span>{t('nav.membership', 'Get Membership & Certificate (৳250)')}</span>
+                <span>Get Membership & Certificate (৳250)</span>
               </button>
 
               <button
@@ -76,7 +74,7 @@ export const Hero: React.FC<HeroProps> = ({
                 className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-sm shadow-sm transition-all hover:scale-[1.02] active:scale-95"
               >
                 <Heart className="w-4 h-4 text-rose-300 fill-rose-300" />
-                <span>{t('nav.donate', 'Support Active Causes')}</span>
+                <span>Support Active Causes</span>
               </button>
 
               <button
@@ -85,7 +83,7 @@ export const Hero: React.FC<HeroProps> = ({
                 title="Scan QR Code"
               >
                 <QrCode className="w-4 h-4 text-emerald-800" />
-                <span>{t('nav.eventQr', 'Scan QR')}</span>
+                <span>Scan QR</span>
               </button>
             </div>
 
@@ -115,8 +113,8 @@ export const Hero: React.FC<HeroProps> = ({
           <div className="lg:col-span-5 relative">
             <div className="relative rounded-2xl overflow-hidden border border-stone-300 shadow-xl bg-stone-100 group">
               <img
-                src="/src/assets/images/hero_humanitarian_bangladesh_1791220911416.jpg"
-                alt="Afzal Charitable Trust humanitarian community relief and education in Bangladesh"
+                src="/src/assets/images/hero_community_empowerment_1791208356769.jpg"
+                alt="Afzal Charitable Trust humanitarian community education drive in Bangladesh"
                 className="w-full h-80 sm:h-96 object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                 referrerPolicy="no-referrer"
               />

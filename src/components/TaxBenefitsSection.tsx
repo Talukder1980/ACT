@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 import { TRUST_NAME } from '../data/mockData';
 import { TrustLogo } from './TrustLogo';
-import { useLanguage } from '../context/LanguageContext';
 
 interface TaxBenefitsSectionProps {
   onOpenDonate?: (amount?: number) => void;
@@ -30,8 +29,6 @@ export const TaxBenefitsSection: React.FC<TaxBenefitsSectionProps> = ({
   onOpenDonate,
   onOpenShare
 }) => {
-  const { t } = useLanguage();
-
   // Calculator State
   const [calcDonationAmount, setCalcDonationAmount] = useState<number>(25000);
   const [showCertificateModal, setShowCertificateModal] = useState<boolean>(false);

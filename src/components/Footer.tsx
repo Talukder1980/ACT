@@ -20,8 +20,6 @@ import {
 import { TRUST_NAME, TRUST_MOTTO, TRUST_ESTABLISHED } from '../data/mockData';
 import { TrustLogo } from './TrustLogo';
 import { LegalModal } from './LegalModal';
-import { useLanguage } from '../context/LanguageContext';
-import { LanguageSelector } from './LanguageSelector';
 
 interface FooterProps {
   onOpenQr: () => void;
@@ -36,7 +34,6 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenDonate,
   onOpenShare,
 }) => {
-  const { t } = useLanguage();
   const [legalModalOpen, setLegalModalOpen] = useState(false);
   const [legalModalTab, setLegalModalTab] = useState<'privacy' | 'terms'>('privacy');
 
@@ -235,31 +232,29 @@ export const Footer: React.FC<FooterProps> = ({
         {/* Bottom Sub-Footer */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-500">
           <div>
-            © {new Date().getFullYear()} {TRUST_NAME}. {t('footer.copyright', 'All rights reserved. Operated under solemn humanitarian charter in Bangladesh.')}
+            © {new Date().getFullYear()} {TRUST_NAME}. All rights reserved. Operated under solemn humanitarian charter in Bangladesh.
           </div>
           
           <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[11px]">
-            <LanguageSelector variant="compact" dark />
-            <span>·</span>
             <button
               onClick={() => openLegal('privacy')}
               className="text-stone-400 hover:text-white transition-colors underline-offset-4 hover:underline"
             >
-              {t('footer.privacy', 'Privacy Policy')}
+              Privacy Policy
             </button>
             <span>·</span>
             <button
               onClick={() => openLegal('terms')}
               className="text-stone-400 hover:text-white transition-colors underline-offset-4 hover:underline"
             >
-              {t('footer.terms', 'Terms & Conditions')}
+              Terms & Conditions
             </button>
             <span>·</span>
-            <span>{t('footer.transparency', 'Transparency & Audit')}</span>
+            <span>Transparency & Audit</span>
             <span>·</span>
-            <span>{t('footer.nonDiscrimination', 'Non-Discrimination Policy')}</span>
+            <span>Non-Discrimination Policy</span>
             <span>·</span>
-            <span>{t('footer.taxExempt', 'Tax Exemption SRO No. 192')}</span>
+            <span>Tax Exemption SRO No. 192</span>
           </div>
         </div>
 

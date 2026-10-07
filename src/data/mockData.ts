@@ -356,7 +356,7 @@ export const GALLERY_PHOTOS: GalleryPhoto[] = [
     category: 'Education',
     location: 'Baniachong, Habiganj',
     date: 'February 2026',
-    imageSrc: '/src/assets/images/hero_humanitarian_bangladesh_1791220911416.jpg',
+    imageSrc: '/src/assets/images/hero_community_empowerment_1791208356769.jpg',
     caption: 'Volunteer educators guiding village students with freshly provided STEM textbooks and digital learning kits in an open pavilion.',
     beneficiaryImpact: '140 Students Equipped'
   },

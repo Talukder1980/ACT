@@ -21,8 +21,6 @@ import {
   Receipt
 } from 'lucide-react';
 import { TrustLogo } from './TrustLogo';
-import { useLanguage } from '../context/LanguageContext';
-import { LanguageSelector } from './LanguageSelector';
 
 interface NavbarProps {
   onOpenQr: () => void;
@@ -44,7 +42,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenMembership,
   onOpenDonate,
 }) => {
-  const { t } = useLanguage();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -56,7 +53,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       items: [
         {
           id: 'orphanage',
-          label: t('nav.orphanage', 'Orphanage & Widows Home'),
+          label: 'Orphanage & Widows Home',
           href: '#orphanage-widows-building',
           icon: Building2,
           description: 'Special sanctuary construction project & 6 gift dedication packages.',
@@ -64,7 +61,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         },
         {
           id: 'pillars',
-          label: t('nav.pillars', '16 Humanitarian Pillars'),
+          label: '16 Humanitarian Pillars',
           href: '#pillars',
           icon: Sparkles,
           description: 'Education, medical camps, disaster rescue, poverty relief & welfare.'
@@ -76,28 +73,28 @@ export const Navbar: React.FC<NavbarProps> = ({
       items: [
         {
           id: 'giftcards',
-          label: t('nav.giftcards', 'Charitable Gift Cards ($5 - $100)'),
+          label: 'Charitable Gift Cards ($5 - $100)',
           href: '#giftcards',
           icon: Gift,
           description: '6 purposeful gift tiers with instant email dispatch & QR certificates.'
         },
         {
           id: 'donations',
-          label: t('nav.donations', 'Live Donation Tracker'),
+          label: 'Live Donation Tracker',
           href: '#donations',
           icon: TrendingUp,
           description: 'Real-time relief campaign metrics and transparent fund allocation.'
         },
         {
           id: 'membership',
-          label: t('nav.membership', 'Lifetime Membership (৳250)'),
+          label: 'Lifetime Membership (৳250)',
           href: '#membership',
           icon: Award,
           description: 'Official member registry, digital ID, and authenticated certificate.'
         },
         {
           id: 'tax-benefits',
-          label: t('nav.taxBenefits', 'Tax Benefits for Donors'),
+          label: 'Tax Benefits for Donors',
           href: '#tax-benefits',
           icon: Receipt,
           description: '15% NBR tax rebate on donations under Bangladesh Income Tax Act 2023.',
@@ -110,21 +107,21 @@ export const Navbar: React.FC<NavbarProps> = ({
       items: [
         {
           id: 'volunteer',
-          label: t('nav.volunteer', 'Volunteer Corps Enlistment'),
+          label: 'Volunteer Corps Enlistment',
           href: '#volunteer',
           icon: HeartHandshake,
           description: 'Join 1,420+ volunteers across 64 districts in Bangladesh with verified pass.'
         },
         {
           id: 'notices',
-          label: t('nav.notices', 'Trust Notice Board & Gazettes'),
+          label: 'Trust Notice Board & Gazettes',
           href: '#notices',
           icon: Bell,
           description: 'Official announcements, meeting minutes, and annual audited gazettes.'
         },
         {
           id: 'gallery',
-          label: t('nav.gallery', 'Documentary Photo Gallery'),
+          label: 'Documentary Photo Gallery',
           href: '#gallery',
           icon: Camera,
           description: 'Photographic evidence of relief distributions and rural medical camps.'
@@ -179,10 +176,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               <TrustLogo size="sm" />
               <div className="leading-tight">
                 <span className="font-serif text-lg sm:text-xl font-bold tracking-tight text-stone-900 block">
-                  {t('trust.name', 'Afzal Charitable Trust')}
+                  Afzal Charitable Trust
                 </span>
                 <span className="text-[10px] text-stone-500 font-sans tracking-wide hidden sm:block">
-                  {t('trust.registered', 'Registered Non-Profit Trust · Bangladesh')}
+                  Registered Non-Profit Trust · Bangladesh
                 </span>
               </div>
             </a>
@@ -197,7 +194,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <span className="w-2 h-2 rounded-full bg-emerald-600 animate-ping" />
                 <Building2 className="w-3.5 h-3.5 text-emerald-800" />
-                <span>{t('nav.buildingSanctuary', 'Building Sanctuary')}</span>
+                <span>Building Sanctuary</span>
               </button>
 
               {/* Vertical Menu Dropdown */}
@@ -213,7 +210,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   aria-expanded={dropdownOpen}
                 >
                   <Menu className="w-4 h-4 text-emerald-800" />
-                  <span>{t('nav.allPortals', 'All Portals & Menu')}</span>
+                  <span>All Portals & Menu</span>
                   <ChevronDown className={`w-3.5 h-3.5 text-stone-500 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
 
@@ -287,19 +284,15 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
             </div>
 
-            {/* Right: Actions, Language Switcher & Universal Vertical Menu Trigger */}
+            {/* Right: Actions & Universal Vertical Menu Trigger */}
             <div className="flex items-center gap-2 sm:gap-2.5">
-              
-              {/* Language Switcher Dropdown */}
-              <LanguageSelector variant="compact" />
-
               <button
                 onClick={onOpenQr}
                 className="hidden xl:inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-stone-700 hover:text-stone-950 bg-stone-100 hover:bg-stone-200 rounded-xl transition-colors border border-stone-200"
                 title="Event QR Code"
               >
                 <QrCode className="w-4 h-4 text-emerald-800" />
-                <span>{t('nav.eventQr', 'Event QR')}</span>
+                <span>Event QR</span>
               </button>
 
               <button
@@ -307,7 +300,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-2 text-xs font-semibold text-emerald-950 bg-amber-300 hover:bg-amber-400 rounded-xl transition-colors shadow-2xs border border-amber-400 whitespace-nowrap"
               >
                 <Award className="w-3.5 h-3.5 text-emerald-900" />
-                <span>{t('nav.membership', 'Membership (৳250)')}</span>
+                <span>Membership (৳250)</span>
               </button>
 
               <button
@@ -315,7 +308,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-emerald-800 hover:bg-emerald-900 rounded-xl transition-colors shadow-2xs whitespace-nowrap"
               >
                 <Heart className="w-3.5 h-3.5 text-rose-300 fill-rose-300" />
-                <span>{t('nav.donate', 'Donate')}</span>
+                <span>Donate</span>
               </button>
 
               {/* Vertical Menu Trigger Button (Replaces cluttered horizontal links) */}
@@ -325,7 +318,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 aria-label="Open Full Vertical Menu"
               >
                 <Menu className="w-4 h-4 text-emerald-800" />
-                <span>{t('nav.menu', 'Menu')}</span>
+                <span>Menu</span>
               </button>
             </div>
 
@@ -378,11 +371,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <div>
                     <strong>Official Trust Note:</strong> All gifts, building endowments, and memberships are processed through this official website only.
                   </div>
-                </div>
-
-                {/* Language Switcher in Drawer */}
-                <div className="p-3.5 bg-stone-50 rounded-2xl border border-stone-200">
-                  <LanguageSelector variant="expanded" />
                 </div>
 
                 {/* Categorized Vertical Sections */}
