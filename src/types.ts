@@ -63,27 +63,43 @@ export interface GiftCardTier {
   amountUSD: number;
   approxBDT: number;
   tierName: string;
+  charitableCause: string;
+  causeCategory: string;
+  causePillar: string;
   impactDescription: string;
   bgColorClass: string;
   textColorClass: string;
   accentBorder: string;
   fontStyleClass: string;
+  fontFamilyName: string;
+  fontSample: string;
   gradient: string;
+  iconName?: string;
 }
 
 export interface PurchasedGiftCard {
   cardId: string;
+  certificateNumber: string;
   voucherCode: string;
   amountUSD: number;
   approxBDT: number;
   tierName: string;
+  charitableCause: string;
+  causeCategory: string;
+  causePillar: string;
   purchaserName: string;
   purchaserEmail: string;
   recipientName: string;
   recipientEmail: string;
+  deliveryOption: 'recipient' | 'purchaser' | 'both';
+  occasion?: string;
   personalMessage: string;
   datePurchased: string;
   colorTheme: string;
+  fontStyleClass: string;
+  fontFamilyName: string;
+  paymentMethod: string;
+  emailDispatchedAt?: string;
 }
 
 export interface GalleryPhoto {
