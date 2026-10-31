@@ -178,6 +178,17 @@ export const Footer: React.FC<FooterProps> = ({
                 <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>{content.general.email}</span>
               </div>
+              {content.general.supportGmail && (
+                <div className="flex items-start gap-2 pt-0.5">
+                  <Mail className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <div className="text-xs">
+                    <span className="text-stone-400 block text-[10px] uppercase font-semibold tracking-wider text-amber-400/90">Dedicated Support & Data Sync</span>
+                    <a href={`mailto:${content.general.supportGmail}`} className="hover:text-amber-300 transition-colors text-stone-200">
+                      {content.general.supportGmail}
+                    </a>
+                  </div>
+                </div>
+              )}
               <div 
                 className="flex items-center gap-2 cursor-default select-none"
                 onDoubleClick={() => {

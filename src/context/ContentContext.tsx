@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { User } from 'firebase/auth';
 import { 
   SiteContent, 
   GeneralContent, 
@@ -10,7 +11,12 @@ import {
   Campaign, 
   Notice, 
   GiftCardTier, 
-  GalleryPhoto 
+  GalleryPhoto,
+  DonationRecord,
+  MemberRecord,
+  VolunteerRegistration,
+  PurchasedGiftCard,
+  SubscriberRecord
 } from '../types';
 import { 
   TRUST_NAME, 
@@ -26,6 +32,30 @@ import {
   GIFT_CARD_TIERS, 
   GALLERY_PHOTOS 
 } from '../data/mockData';
+import { loadDatabase, saveDatabase, DatabaseState } from '../services/dataStore';
+import { 
+  googleSignIn, 
+  googleSignOut, 
+  getAccessToken, 
+  initAuth 
+} from '../services/firebaseAuth';
+import { 
+  createMasterSpreadsheet, 
+  syncAllDataToGoogleSheets, 
+  appendRowToGoogleSheet 
+} from '../services/googleSheets';
+import {
+  exportDonationsToCsv,
+  exportMembershipsToCsv,
+  exportVolunteersToCsv,
+  exportGiftCardsToCsv,
+  exportSubscribersToCsv,
+  exportPillarsToCsv,
+  exportCampaignsToCsv,
+  exportNoticesToCsv,
+  downloadCsvFile,
+  parseCsv
+} from '../services/csvExport';
 
 export const DEFAULT_SITE_CONTENT: SiteContent = {
   version: 1,
@@ -45,6 +75,7 @@ export const DEFAULT_SITE_CONTENT: SiteContent = {
     phone: "+880 1711-000000",
     contactEmail: "info@afzalcharitabletrust.org.bd",
     email: "info@afzalcharitabletrust.org.bd",
+    supportGmail: "support.afzaltrust@gmail.com",
     hqAddress: "48/A Kazi Nazrul Islam Avenue, Dhaka-1215, Bangladesh",
     address: "48/A Kazi Nazrul Islam Avenue, Dhaka-1215, Bangladesh",
     bankName: "Islami Bank Bangladesh PLC",
@@ -133,6 +164,8 @@ const STORAGE_KEY = 'act_cms_content_v1';
 const ADMIN_AUTH_KEY = 'act_cms_admin_session';
 const DEFAULT_ADMIN_PASSKEY = 'admin2026';
 
+export type CsvTableType = 'donations' | 'memberships' | 'volunteers' | 'giftCards' | 'subscribers' | 'pillars' | 'campaigns' | 'notices' | 'all';
+
 interface ContentContextType {
   content: SiteContent;
   updateGeneral: (data: Partial<GeneralContent>) => void;
@@ -162,6 +195,34 @@ interface ContentContextType {
   importContentJson: (jsonString: string) => boolean;
   resetToDefaults: () => void;
   
+  // Operational Database State
+  donations: DonationRecord[];
+  memberships: MemberRecord[];
+  volunteers: VolunteerRegistration[];
+  giftCards: PurchasedGiftCard[];
+  subscribers: SubscriberRecord[];
+  addDonationRecord: (donation: Omit<DonationRecord, 'id'>) => void;
+  addMemberRecord: (member: MemberRecord) => void;
+  addVolunteerRecord: (volunteer: VolunteerRegistration) => void;
+  addGiftCardRecord: (card: PurchasedGiftCard) => void;
+  addSubscriberRecord: (email: string, source?: string) => void;
+
+  // CSV Engine
+  downloadTableCsv: (tableName: CsvTableType) => void;
+  importTableCsv: (tableName: CsvTableType, csvContent: string) => { success: boolean; count: number; message: string };
+
+  // Google Sheets Cloud Database
+  googleUser: User | null;
+  googleAccessToken: string | null;
+  googleSheetConfig: DatabaseState['googleSheetConfig'];
+  isSyncingGoogleSheet: boolean;
+  syncStatusMessage: string | null;
+  connectGoogleAccount: () => Promise<boolean>;
+  disconnectGoogleAccount: () => Promise<void>;
+  createAndSyncGoogleSpreadsheet: (customTitle?: string) => Promise<string>;
+  syncNowToGoogleSheet: () => Promise<number>;
+  setGoogleSpreadsheetId: (id: string) => void;
+
   // Admin & Editing State
   isAdminLoggedIn: boolean;
   loginAdmin: (passkey: string) => boolean;
@@ -184,7 +245,6 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Merge with default in case schema evolves
         return {
           ...DEFAULT_SITE_CONTENT,
           ...parsed,
@@ -201,6 +261,16 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
     return DEFAULT_SITE_CONTENT;
   });
 
+  // Operational Database State
+  const [dbState, setDbState] = useState<DatabaseState>(() => loadDatabase());
+
+  // Google Auth & Sheets State
+  const [googleUser, setGoogleUser] = useState<User | null>(null);
+  const [googleAccessToken, setGoogleAccessToken] = useState<string | null>(null);
+  const [isSyncingGoogleSheet, setIsSyncingGoogleSheet] = useState(false);
+  const [syncStatusMessage, setSyncStatusMessage] = useState<string | null>(null);
+
+  // Admin login state
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(() => {
     try {
       return localStorage.getItem(ADMIN_AUTH_KEY) === 'true';
@@ -213,7 +283,12 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [activeAdminTab, setActiveAdminTab] = useState('general');
 
-  // Sync to localStorage whenever content changes
+  // Save database state
+  useEffect(() => {
+    saveDatabase(dbState);
+  }, [dbState]);
+
+  // Sync site content to localStorage
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(content));
@@ -222,10 +297,26 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   }, [content]);
 
+  // Listen to Google Firebase Auth
+  useEffect(() => {
+    const unsubscribe = initAuth(
+      (user, token) => {
+        setGoogleUser(user);
+        setGoogleAccessToken(token);
+      },
+      () => {
+        setGoogleUser(null);
+        setGoogleAccessToken(null);
+      }
+    );
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
+    };
+  }, []);
+
   // Discreet triggers: Keyboard shortcut (Ctrl+Shift+A) and URL parameter (?admin or #admin)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ctrl+Shift+A or Cmd+Shift+A
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
         e.preventDefault();
         if (isAdminLoggedIn) {
@@ -261,7 +352,7 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
   }, [isAdminLoggedIn]);
 
-  // Sync authentication state
+  // Admin Auth
   const loginAdmin = (passkey: string): boolean => {
     const clean = passkey.trim();
     if (clean === DEFAULT_ADMIN_PASSKEY || clean === 'trustee2026' || clean === 'admin' || clean === '123456') {
@@ -303,6 +394,403 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
       setIsLoginModalOpen(true);
     } else {
       setIsAdminPanelOpen(true);
+    }
+  };
+
+  // Google Account Connect / Switch
+  const connectGoogleAccount = async (): Promise<boolean> => {
+    try {
+      setSyncStatusMessage('Connecting to Google account...');
+      const result = await googleSignIn();
+      if (result) {
+        setGoogleUser(result.user);
+        setGoogleAccessToken(result.accessToken);
+        setDbState(prev => ({
+          ...prev,
+          googleSheetConfig: {
+            ...prev.googleSheetConfig,
+            connectedEmail: result.user.email || null
+          }
+        }));
+        setSyncStatusMessage(`Connected as ${result.user.email || 'Google User'}`);
+        return true;
+      }
+      return false;
+    } catch (err: any) {
+      console.error('Failed to connect Google account:', err);
+      setSyncStatusMessage(`Connection error: ${err.message || 'Access denied'}`);
+      return false;
+    }
+  };
+
+  const disconnectGoogleAccount = async () => {
+    await googleSignOut();
+    setGoogleUser(null);
+    setGoogleAccessToken(null);
+    setSyncStatusMessage('Disconnected from Google account');
+  };
+
+  // Google Sheets Master Database creation & Sync
+  const createAndSyncGoogleSpreadsheet = async (customTitle?: string): Promise<string> => {
+    let token = googleAccessToken;
+    if (!token) {
+      token = await getAccessToken();
+    }
+    if (!token) {
+      throw new Error('Please connect your Google account first.');
+    }
+
+    setIsSyncingGoogleSheet(true);
+    setSyncStatusMessage('Creating Master Database spreadsheet in Google Drive...');
+
+    try {
+      const created = await createMasterSpreadsheet(token, customTitle);
+      
+      setSyncStatusMessage('Writing all 9 database tabs (Donations, Members, Volunteers, Gift Cards, Content)...');
+      await syncAllDataToGoogleSheets(token, created.spreadsheetId, {
+        donations: dbState.donations,
+        memberships: dbState.memberships,
+        volunteers: dbState.volunteers,
+        giftCards: dbState.giftCards,
+        subscribers: dbState.subscribers,
+        pillars: content.pillars,
+        campaigns: content.campaigns,
+        notices: content.notices,
+        general: content.general
+      });
+
+      const now = new Date().toLocaleString('en-US');
+      setDbState(prev => ({
+        ...prev,
+        googleSheetConfig: {
+          spreadsheetId: created.spreadsheetId,
+          spreadsheetUrl: created.spreadsheetUrl,
+          connectedEmail: googleUser?.email || prev.googleSheetConfig.connectedEmail,
+          lastSyncedAt: now
+        }
+      }));
+
+      setSyncStatusMessage(`Successfully created and synced: ${created.spreadsheetId}`);
+      return created.spreadsheetId;
+    } catch (error: any) {
+      setSyncStatusMessage(`Sync error: ${error.message}`);
+      throw error;
+    } finally {
+      setIsSyncingGoogleSheet(false);
+    }
+  };
+
+  const syncNowToGoogleSheet = async (): Promise<number> => {
+    const spreadsheetId = dbState.googleSheetConfig.spreadsheetId;
+    if (!spreadsheetId) {
+      throw new Error('No Google Sheet linked yet. Click "Create & Sync Master Spreadsheet" first.');
+    }
+
+    let token = googleAccessToken;
+    if (!token) {
+      token = await getAccessToken();
+    }
+    if (!token) {
+      throw new Error('Google access token expired. Please reconnect your Google account.');
+    }
+
+    setIsSyncingGoogleSheet(true);
+    setSyncStatusMessage('Syncing all collections to Google Sheets...');
+
+    try {
+      const res = await syncAllDataToGoogleSheets(token, spreadsheetId, {
+        donations: dbState.donations,
+        memberships: dbState.memberships,
+        volunteers: dbState.volunteers,
+        giftCards: dbState.giftCards,
+        subscribers: dbState.subscribers,
+        pillars: content.pillars,
+        campaigns: content.campaigns,
+        notices: content.notices,
+        general: content.general
+      });
+
+      const now = new Date().toLocaleString('en-US');
+      setDbState(prev => ({
+        ...prev,
+        googleSheetConfig: {
+          ...prev.googleSheetConfig,
+          lastSyncedAt: now
+        }
+      }));
+
+      setSyncStatusMessage(`Successfully synced ${res.totalUpdatedCells} cells at ${now}`);
+      return res.totalUpdatedCells;
+    } catch (error: any) {
+      setSyncStatusMessage(`Sync error: ${error.message}`);
+      throw error;
+    } finally {
+      setIsSyncingGoogleSheet(false);
+    }
+  };
+
+  const setGoogleSpreadsheetId = (id: string) => {
+    const cleanId = id.trim();
+    const url = cleanId.startsWith('http') 
+      ? cleanId 
+      : `https://docs.google.com/spreadsheets/d/${cleanId}/edit`;
+    
+    // Extract ID if full URL was pasted
+    let finalId = cleanId;
+    const match = cleanId.match(/\/d\/([a-zA-Z0-9-_]+)/);
+    if (match) {
+      finalId = match[1];
+    }
+
+    setDbState(prev => ({
+      ...prev,
+      googleSheetConfig: {
+        ...prev.googleSheetConfig,
+        spreadsheetId: finalId,
+        spreadsheetUrl: url
+      }
+    }));
+  };
+
+  // Operational Database Mutators (with auto-append to Google Sheet if configured)
+  const addDonationRecord = (donation: Omit<DonationRecord, 'id'>) => {
+    const record: DonationRecord = {
+      ...donation,
+      id: `don-${Date.now()}`
+    };
+    setDbState(prev => ({
+      ...prev,
+      donations: [record, ...prev.donations]
+    }));
+
+    // Background auto-append to Google Sheet
+    if (googleAccessToken && dbState.googleSheetConfig.spreadsheetId) {
+      appendRowToGoogleSheet(googleAccessToken, dbState.googleSheetConfig.spreadsheetId, 'Donations_Pledges', [
+        record.receiptNo,
+        record.date,
+        record.donorName,
+        record.donorEmail || '',
+        record.donorPhone || '',
+        record.amountBDT,
+        record.campaignTitle,
+        record.paymentMethod || 'Online',
+        record.status || 'Verified',
+        record.isAnonymous ? 'Yes' : 'No'
+      ]);
+    }
+  };
+
+  const addMemberRecord = (member: MemberRecord) => {
+    setDbState(prev => ({
+      ...prev,
+      memberships: [member, ...prev.memberships]
+    }));
+
+    if (googleAccessToken && dbState.googleSheetConfig.spreadsheetId) {
+      appendRowToGoogleSheet(googleAccessToken, dbState.googleSheetConfig.spreadsheetId, 'Lifetime_Memberships', [
+        member.memberId,
+        member.certificateSerial,
+        member.fullName,
+        member.email,
+        member.phone,
+        member.district,
+        member.occupation,
+        member.bloodGroup,
+        member.membershipFeeBDT,
+        member.registrationDate,
+        member.status
+      ]);
+    }
+  };
+
+  const addVolunteerRecord = (volunteer: VolunteerRegistration) => {
+    setDbState(prev => ({
+      ...prev,
+      volunteers: [volunteer, ...prev.volunteers]
+    }));
+
+    if (googleAccessToken && dbState.googleSheetConfig.spreadsheetId) {
+      appendRowToGoogleSheet(googleAccessToken, dbState.googleSheetConfig.spreadsheetId, 'Volunteer_Corps', [
+        volunteer.volunteerId,
+        volunteer.fullName,
+        volunteer.email,
+        volunteer.phone,
+        volunteer.district,
+        volunteer.primaryExpertise,
+        volunteer.secondarySkills || '',
+        Array.isArray(volunteer.selectedFocusAreas) ? volunteer.selectedFocusAreas.join('; ') : volunteer.selectedFocusAreas,
+        volunteer.availability,
+        volunteer.joinedDate,
+        volunteer.motivationNote || ''
+      ]);
+    }
+  };
+
+  const addGiftCardRecord = (card: PurchasedGiftCard) => {
+    setDbState(prev => ({
+      ...prev,
+      giftCards: [card, ...prev.giftCards]
+    }));
+
+    if (googleAccessToken && dbState.googleSheetConfig.spreadsheetId) {
+      appendRowToGoogleSheet(googleAccessToken, dbState.googleSheetConfig.spreadsheetId, 'Gift_Certificates', [
+        card.certificateNumber,
+        card.voucherCode,
+        card.tierName,
+        card.amountUSD,
+        card.approxBDT,
+        card.charitableCause,
+        card.causePillar,
+        card.purchaserName,
+        card.purchaserEmail,
+        card.recipientName,
+        card.recipientEmail,
+        card.datePurchased
+      ]);
+    }
+  };
+
+  const addSubscriberRecord = (email: string, source = 'Website') => {
+    const newSub: SubscriberRecord = {
+      id: `sub-${Date.now()}`,
+      email: email.trim().toLowerCase(),
+      subscribedAt: new Date().toISOString().split('T')[0],
+      source
+    };
+    setDbState(prev => ({
+      ...prev,
+      subscribers: [newSub, ...prev.subscribers.filter(s => s.email !== newSub.email)]
+    }));
+
+    if (googleAccessToken && dbState.googleSheetConfig.spreadsheetId) {
+      appendRowToGoogleSheet(googleAccessToken, dbState.googleSheetConfig.spreadsheetId, 'Newsletter_Subscribers', [
+        newSub.id,
+        newSub.email,
+        newSub.subscribedAt,
+        newSub.source
+      ]);
+    }
+  };
+
+  // CSV Engine Actions
+  const downloadTableCsv = (tableName: CsvTableType) => {
+    const timestamp = new Date().toISOString().split('T')[0];
+    switch (tableName) {
+      case 'donations':
+        downloadCsvFile(`Afzal_Trust_Donations_${timestamp}.csv`, exportDonationsToCsv(dbState.donations));
+        break;
+      case 'memberships':
+        downloadCsvFile(`Afzal_Trust_Memberships_${timestamp}.csv`, exportMembershipsToCsv(dbState.memberships));
+        break;
+      case 'volunteers':
+        downloadCsvFile(`Afzal_Trust_Volunteers_${timestamp}.csv`, exportVolunteersToCsv(dbState.volunteers));
+        break;
+      case 'giftCards':
+        downloadCsvFile(`Afzal_Trust_GiftCards_${timestamp}.csv`, exportGiftCardsToCsv(dbState.giftCards));
+        break;
+      case 'subscribers':
+        downloadCsvFile(`Afzal_Trust_Subscribers_${timestamp}.csv`, exportSubscribersToCsv(dbState.subscribers));
+        break;
+      case 'pillars':
+        downloadCsvFile(`Afzal_Trust_16_Pillars_${timestamp}.csv`, exportPillarsToCsv(content.pillars));
+        break;
+      case 'campaigns':
+        downloadCsvFile(`Afzal_Trust_Campaigns_${timestamp}.csv`, exportCampaignsToCsv(content.campaigns));
+        break;
+      case 'notices':
+        downloadCsvFile(`Afzal_Trust_Notices_${timestamp}.csv`, exportNoticesToCsv(content.notices));
+        break;
+      case 'all': {
+        // Multi-table combined CSV archive
+        const parts = [
+          '=== AFZAL CHARITABLE TRUST MASTER DATABASE ===',
+          `Generated: ${new Date().toLocaleString()}`,
+          '',
+          '--- TABLE: DONATIONS & PLEDGES ---',
+          exportDonationsToCsv(dbState.donations),
+          '',
+          '--- TABLE: LIFETIME MEMBERSHIPS ---',
+          exportMembershipsToCsv(dbState.memberships),
+          '',
+          '--- TABLE: VOLUNTEER CORPS ---',
+          exportVolunteersToCsv(dbState.volunteers),
+          '',
+          '--- TABLE: CHARITABLE GIFT CARDS ---',
+          exportGiftCardsToCsv(dbState.giftCards),
+          '',
+          '--- TABLE: SUBSCRIBERS ---',
+          exportSubscribersToCsv(dbState.subscribers),
+          '',
+          '--- TABLE: 16 CORE PILLARS ---',
+          exportPillarsToCsv(content.pillars)
+        ];
+        downloadCsvFile(`Afzal_Trust_Complete_Database_${timestamp}.csv`, parts.join('\r\n'));
+        break;
+      }
+    }
+  };
+
+  const importTableCsv = (tableName: CsvTableType, csvContent: string): { success: boolean; count: number; message: string } => {
+    try {
+      const parsedRows = parseCsv(csvContent);
+      if (parsedRows.length <= 1) {
+        return { success: false, count: 0, message: 'CSV file is empty or contains only header row.' };
+      }
+
+      const dataRows = parsedRows.slice(1);
+
+      if (tableName === 'donations') {
+        const imported: DonationRecord[] = dataRows.map((r, i) => ({
+          id: `don-csv-${Date.now()}-${i}`,
+          receiptNo: r[0] || `ACT-DON-${Date.now().toString().slice(-6)}`,
+          date: r[1] || new Date().toLocaleDateString('en-US'),
+          donorName: r[2] || 'Supporter',
+          donorEmail: r[3] || undefined,
+          donorPhone: r[4] || undefined,
+          amountBDT: parseInt(r[5] || '0', 10) || 1000,
+          campaignTitle: r[6] || 'General Relief Fund',
+          paymentMethod: r[7] || 'bKash Pay',
+          status: r[8] || 'Verified',
+          isAnonymous: r[9]?.toLowerCase() === 'yes'
+        }));
+        setDbState(prev => ({ ...prev, donations: [...imported, ...prev.donations] }));
+        return { success: true, count: imported.length, message: `Successfully imported ${imported.length} donation records.` };
+      }
+
+      if (tableName === 'memberships') {
+        const imported: MemberRecord[] = dataRows.map((r, i) => ({
+          memberId: r[0] || `ACT-MEM-2026-${i + 100}`,
+          certificateSerial: r[1] || `CERT-BD-ACT-${Math.floor(100000 + Math.random() * 900000)}`,
+          fullName: r[2] || 'Member',
+          email: r[3] || 'member@example.com',
+          phone: r[4] || '+880 1711 000000',
+          district: r[5] || 'Dhaka',
+          occupation: r[6] || 'Professional',
+          bloodGroup: r[7] || 'B+',
+          membershipFeeBDT: parseInt(r[8] || '250', 10) || 250,
+          registrationDate: r[9] || new Date().toLocaleDateString('en-US'),
+          validUntil: 'Lifetime Member',
+          paymentMethod: r[11] || 'bKash',
+          status: (['Active', 'Pending', 'Verified'].includes(r[12]) ? (r[12] as 'Active' | 'Pending' | 'Verified') : 'Verified')
+        }));
+        setDbState(prev => ({ ...prev, memberships: [...imported, ...prev.memberships] }));
+        return { success: true, count: imported.length, message: `Successfully imported ${imported.length} lifetime member records.` };
+      }
+
+      if (tableName === 'subscribers') {
+        const imported: SubscriberRecord[] = dataRows.map((r, i) => ({
+          id: `sub-csv-${Date.now()}-${i}`,
+          email: r[1] || r[0] || '',
+          subscribedAt: r[2] || new Date().toISOString().split('T')[0],
+          source: r[3] || 'CSV Import'
+        })).filter(s => s.email.includes('@'));
+        setDbState(prev => ({ ...prev, subscribers: [...imported, ...prev.subscribers] }));
+        return { success: true, count: imported.length, message: `Successfully imported ${imported.length} email subscribers.` };
+      }
+
+      return { success: false, count: 0, message: `Import not supported for ${tableName}.` };
+    } catch (err: any) {
+      return { success: false, count: 0, message: `Error parsing CSV: ${err.message}` };
     }
   };
 
@@ -554,6 +1042,36 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
       exportContentJson,
       importContentJson,
       resetToDefaults,
+
+      // Operational Database State
+      donations: dbState.donations,
+      memberships: dbState.memberships,
+      volunteers: dbState.volunteers,
+      giftCards: dbState.giftCards,
+      subscribers: dbState.subscribers,
+      addDonationRecord,
+      addMemberRecord,
+      addVolunteerRecord,
+      addGiftCardRecord,
+      addSubscriberRecord,
+
+      // CSV Engine
+      downloadTableCsv,
+      importTableCsv,
+
+      // Google Sheets
+      googleUser,
+      googleAccessToken,
+      googleSheetConfig: dbState.googleSheetConfig,
+      isSyncingGoogleSheet,
+      syncStatusMessage,
+      connectGoogleAccount,
+      disconnectGoogleAccount,
+      createAndSyncGoogleSpreadsheet,
+      syncNowToGoogleSheet,
+      setGoogleSpreadsheetId,
+
+      // Admin & Editing State
       isAdminLoggedIn,
       loginAdmin,
       logoutAdmin,

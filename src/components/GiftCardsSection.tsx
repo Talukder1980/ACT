@@ -47,7 +47,7 @@ const RECENT_COMMUNITY_GIFTS = [
 ];
 
 export const GiftCardsSection: React.FC<GiftCardsSectionProps> = ({ onOpenShare }) => {
-  const { content, isAdminLoggedIn, openAdminTab } = useContent();
+  const { content, isAdminLoggedIn, openAdminTab, addGiftCardRecord } = useContent();
   const giftCardTiers = content.giftCards;
   // Selected Tier (default $25)
   const [selectedTier, setSelectedTier] = useState<GiftCardTier>(giftCardTiers[2] || GIFT_CARD_TIERS[2]);
@@ -151,6 +151,8 @@ export const GiftCardsSection: React.FC<GiftCardsSectionProps> = ({ onOpenShare 
 
       setCertificateQrUrl(qrUrl);
       setActiveCertificate(cardRecord);
+      // Persist to separate operational database and Google Sheet sync queue
+      addGiftCardRecord(cardRecord);
       setIsSubmitting(false);
       setDispatchStage('');
 

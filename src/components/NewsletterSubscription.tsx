@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Mail, CheckCircle2, Send, ShieldCheck } from 'lucide-react';
+import { useContent } from '../context/ContentContext';
 
 export const NewsletterSubscription: React.FC = () => {
+  const { addSubscriberRecord } = useContent();
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -12,6 +14,7 @@ export const NewsletterSubscription: React.FC = () => {
 
     setIsSubmitting(true);
     setTimeout(() => {
+      addSubscriberRecord(email.trim(), 'Website Footer Bulletin');
       setIsSubmitting(false);
       setSubscribed(true);
       setEmail('');

@@ -18,6 +18,7 @@ export interface Notice {
   excerpt: string;
   content: string;
   signatory: string;
+  attachmentName?: string;
 }
 
 export interface Campaign {
@@ -179,6 +180,30 @@ export interface GeneralContent {
   routingNumber: string;
   swiftCode: string;
   bkashMerchant: string;
+  supportGmail?: string;
+}
+
+export interface DonationRecord {
+  id: string;
+  receiptNo: string;
+  date: string;
+  donorName: string;
+  donorEmail?: string;
+  donorPhone?: string;
+  amountBDT: number;
+  currency?: string;
+  campaignTitle: string;
+  campaignId?: string;
+  paymentMethod: string;
+  status?: string;
+  isAnonymous?: boolean;
+}
+
+export interface SubscriberRecord {
+  id: string;
+  email: string;
+  subscribedAt: string;
+  source: string;
 }
 
 export interface HeroContent {

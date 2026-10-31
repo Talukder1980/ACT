@@ -40,12 +40,14 @@ import { VolunteerRegistration } from '../types';
 import { TRUST_NAME, TRUST_MOTTO, bangladeshDistricts } from '../data/mockData';
 import { generateQrDataUrl } from '../utils/qrGenerator';
 import { TrustLogo } from './TrustLogo';
+import { useContent } from '../context/ContentContext';
 
 interface VolunteerSectionProps {
   onOpenShare: (title: string, text: string) => void;
 }
 
 export const VolunteerSection: React.FC<VolunteerSectionProps> = ({ onOpenShare }) => {
+  const { addVolunteerRecord } = useContent();
   // 16 Core Areas of Action (Trust Pillars)
   const FOCUS_AREAS = [
     {
@@ -299,6 +301,8 @@ export const VolunteerSection: React.FC<VolunteerSectionProps> = ({ onOpenShare 
       setRecentCorps(prev => [newVolunteer, ...prev]);
       setVolunteerQrUrl(qr);
       setIssuedVolunteer(newVolunteer);
+      // Persist to separate operational database and Google Sheet sync queue
+      addVolunteerRecord(newVolunteer);
       setIsSubmitting(false);
 
       try {

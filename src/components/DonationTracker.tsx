@@ -32,7 +32,7 @@ export const DonationTracker: React.FC<DonationTrackerProps> = ({
   onOpenQr,
   targetCausePreselect
 }) => {
-  const { content, updateCampaign, isAdminLoggedIn, openAdminTab } = useContent();
+  const { content, updateCampaign, isAdminLoggedIn, openAdminTab, addDonationRecord } = useContent();
   const campaigns = content.campaigns;
   const [recentDonors, setRecentDonors] = useState<DonorContribution[]>(INITIAL_RECENT_DONORS);
   const [currency, setCurrency] = useState<'BDT' | 'USD'>('BDT'); // 1 USD ~ 120 BDT
@@ -93,6 +93,20 @@ export const DonationTracker: React.FC<DonationTrackerProps> = ({
       updateCampaign(activeCampaignForDonation.id, {
         raisedBDT: activeCampaignForDonation.raisedBDT + finalAmount,
         donorsCount: activeCampaignForDonation.donorsCount + 1
+      });
+
+      // Persist to separate operational database (stored locally & queued for Google Sheets)
+      addDonationRecord({
+        receiptNo,
+        donorName: donorDisplay,
+        donorEmail: donorEmail.trim() || undefined,
+        campaignTitle: activeCampaignForDonation.title,
+        campaignId: activeCampaignForDonation.id,
+        amountBDT: finalAmount,
+        currency: 'BDT',
+        paymentMethod: payMethod || 'bKash / Mobile Banking',
+        isAnonymous,
+        date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
       });
 
       // Add to recent donors

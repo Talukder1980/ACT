@@ -24,9 +24,19 @@ import {
   Layers,
   HelpCircle,
   Eye,
-  Info
+  Info,
+  Database,
+  Table,
+  Cloud,
+  FileSpreadsheet,
+  RefreshCw,
+  FileDown,
+  FileUp,
+  Mail,
+  UserCheck,
+  CheckCircle2
 } from 'lucide-react';
-import { useContent } from '../context/ContentContext';
+import { useContent, CsvTableType } from '../context/ContentContext';
 import { Pillar, Campaign, Notice, GiftCardTier, GalleryPhoto } from '../types';
 import { TrustLogo } from './TrustLogo';
 
@@ -63,13 +73,39 @@ export const AdminModal: React.FC = () => {
     setIsAdminPanelOpen,
     logoutAdmin,
     activeAdminTab,
-    setActiveAdminTab
+    setActiveAdminTab,
+
+    // Operational Database & Google Sheets
+    donations,
+    memberships,
+    volunteers,
+    giftCards,
+    subscribers,
+    downloadTableCsv,
+    importTableCsv,
+    googleUser,
+    googleAccessToken,
+    googleSheetConfig,
+    isSyncingGoogleSheet,
+    syncStatusMessage,
+    connectGoogleAccount,
+    disconnectGoogleAccount,
+    createAndSyncGoogleSpreadsheet,
+    syncNowToGoogleSheet,
+    setGoogleSpreadsheetId
   } = useContent();
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [importJsonText, setImportJsonText] = useState('');
   const [importError, setImportError] = useState(false);
   const [confirmResetOpen, setConfirmResetOpen] = useState(false);
+
+  // Database Tab States
+  const [customSheetTitle, setCustomSheetTitle] = useState('Afzal Charitable Trust - Master Database 2026');
+  const [manualSheetId, setManualSheetId] = useState('');
+  const [selectedCsvType, setSelectedCsvType] = useState<CsvTableType>('donations');
+  const [csvInputContent, setCsvInputContent] = useState('');
+  const [csvResultNotice, setCsvResultNotice] = useState<string | null>(null);
 
   // Pillar Editor state
   const [editingPillarId, setEditingPillarId] = useState<string | null>(null);
@@ -262,7 +298,8 @@ export const AdminModal: React.FC = () => {
               { id: 'giftcards', label: '8. Gift Cards (6 Tiers)', icon: Gift },
               { id: 'tax', label: '9. Tax Benefits (NBR)', icon: Scale },
               { id: 'gallery', label: '10. Photo Gallery', icon: Camera },
-              { id: 'backup', label: '11. Backup & Reset', icon: Download },
+              { id: 'database', label: '11. Cloud Sheets & CSV Database', icon: Database },
+              { id: 'backup', label: '12. Backup & Reset', icon: Download },
             ].map(tab => {
               const Icon = tab.icon;
               return (
@@ -403,6 +440,22 @@ export const AdminModal: React.FC = () => {
                         className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-xl text-xs text-stone-900"
                       />
                     </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">
+                      Support & Cloud Database Gmail Account
+                    </label>
+                    <input
+                      type="email"
+                      value={content.general.supportGmail || ''}
+                      onChange={(e) => updateGeneral({ supportGmail: e.target.value })}
+                      placeholder="e.g. support.afzaltrust@gmail.com"
+                      className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-xl text-xs text-stone-900"
+                    />
+                    <span className="text-[10px] text-stone-500 mt-1 block">
+                      Dedicated Gmail account used for donor support communications and Google Sheets database storage.
+                    </span>
                   </div>
 
                   <div>
@@ -1703,7 +1756,422 @@ export const AdminModal: React.FC = () => {
             )}
 
             {/* ======================================================== */}
-            {/* TAB 11: BACKUP, EXPORT & RESET                           */}
+            {/* TAB 11: CLOUD GOOGLE SHEETS & CSV DATABASE               */}
+            {/* ======================================================== */}
+            {activeAdminTab === 'database' && (
+              <div className="max-w-4xl space-y-6">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-950 font-mono text-[10px] font-bold uppercase tracking-wider border border-emerald-300">
+                      External Database Architecture
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-950 font-mono text-[10px] font-bold uppercase tracking-wider border border-blue-300">
+                      Google Sheets v4 API
+                    </span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-serif font-bold text-stone-900 mt-2">
+                    Separate Cloud Database: Google Sheets & CSV Files
+                  </h3>
+                  <p className="text-xs sm:text-sm text-stone-600 mt-1">
+                    Store, manage, and continuously synchronize all website records (donations, lifetime members, volunteers, gift cards, subscribers, and site content) in a separate Google Sheets database or download individual CSV spreadsheet files.
+                  </p>
+                </div>
+
+                {/* 1. GOOGLE SHEETS CLOUD DATABASE INTEGRATION */}
+                <div className="bg-white p-5 sm:p-6 rounded-3xl border border-stone-200 shadow-xs space-y-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-100 pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-800">
+                        <FileSpreadsheet className="w-5 h-5 text-emerald-700" />
+                      </div>
+                      <div>
+                        <h4 className="font-serif font-bold text-base text-stone-900">
+                          Google Sheets Master Database
+                        </h4>
+                        <p className="text-xs text-stone-500">
+                          Multi-tab real-time spreadsheet on Google Drive
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {googleUser ? (
+                        <div className="flex items-center gap-2 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                          <span className="text-xs font-semibold text-emerald-950">
+                            {googleUser.email}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={disconnectGoogleAccount}
+                            className="text-[11px] text-stone-400 hover:text-rose-600 font-medium ml-1"
+                          >
+                            Disconnect
+                          </button>
+                        </div>
+                      ) : (
+                        <span className="text-xs font-semibold text-stone-500 bg-stone-100 px-3 py-1.5 rounded-xl border border-stone-200">
+                          Not Connected
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Account Connect Action */}
+                  {!googleUser ? (
+                    <div className="p-4 bg-gradient-to-r from-emerald-950 to-stone-900 text-white rounded-2xl border border-emerald-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                      <div className="space-y-1">
+                        <span className="text-xs font-bold text-amber-300 uppercase tracking-wider block">
+                          Step 1: Connect Support & Database Google Account
+                        </span>
+                        <p className="text-xs text-stone-300 max-w-lg leading-relaxed">
+                          Sign in with Google to grant permission for Google Sheets and Drive. You can select your dedicated support Gmail (<strong className="text-amber-200">{content.general.supportGmail || 'support.afzaltrust@gmail.com'}</strong>) or any other Google account.
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          const ok = await connectGoogleAccount();
+                          if (ok) showToast('Google account connected successfully!');
+                        }}
+                        className="w-full sm:w-auto px-5 py-2.5 bg-white hover:bg-stone-100 text-stone-900 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md transition-all whitespace-nowrap"
+                      >
+                        <svg className="w-4 h-4" viewBox="0 0 24 24">
+                          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                        </svg>
+                        <span>Connect Support Gmail</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {/* Active Spreadsheet Details */}
+                      {googleSheetConfig.spreadsheetId ? (
+                        <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 space-y-3">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div>
+                              <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block">
+                                Linked Google Spreadsheet
+                              </span>
+                              <div className="font-mono text-xs sm:text-sm font-bold text-emerald-950 flex items-center gap-1.5 mt-0.5">
+                                <span>{googleSheetConfig.spreadsheetId}</span>
+                              </div>
+                            </div>
+
+                            <a
+                              href={googleSheetConfig.spreadsheetUrl || `https://docs.google.com/spreadsheets/d/${googleSheetConfig.spreadsheetId}/edit`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-bold transition-colors shadow-2xs w-fit"
+                            >
+                              <span>Open in Google Sheets</span>
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </a>
+                          </div>
+
+                          <div className="text-[11px] text-emerald-900 flex flex-wrap items-center gap-4 pt-1 border-t border-emerald-200/60">
+                            <span><strong>Status:</strong> Active & Connected</span>
+                            <span><strong>Owner Account:</strong> {googleUser.email}</span>
+                            {googleSheetConfig.lastSyncedAt && (
+                              <span><strong>Last Full Sync:</strong> {googleSheetConfig.lastSyncedAt}</span>
+                            )}
+                          </div>
+                        </div>
+                      ) : null}
+
+                      {/* Sync & Provision Controls */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="p-4 bg-stone-50 rounded-2xl border border-stone-200 space-y-2">
+                          <span className="text-xs font-bold text-stone-900 block">
+                            Create Master Spreadsheet
+                          </span>
+                          <p className="text-[11px] text-stone-500">
+                            Creates a fresh Google Spreadsheet in your Drive with 9 dedicated tabs (Donations, Members, Volunteers, Gift Cards, Subscribers, Pillars, etc.) and auto-populates all records.
+                          </p>
+                          <div className="pt-2">
+                            <button
+                              type="button"
+                              disabled={isSyncingGoogleSheet}
+                              onClick={async () => {
+                                try {
+                                  await createAndSyncGoogleSpreadsheet(customSheetTitle);
+                                  showToast('Master Google Spreadsheet created and synced!');
+                                } catch (err: any) {
+                                  showToast(`Error: ${err.message}`);
+                                }
+                              }}
+                              className="w-full py-2.5 px-4 bg-emerald-800 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                            >
+                              <FileSpreadsheet className="w-4 h-4 text-amber-300" />
+                              <span>{isSyncingGoogleSheet ? 'Provisioning Spreadsheet...' : 'Create & Sync Master Spreadsheet'}</span>
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="p-4 bg-stone-50 rounded-2xl border border-stone-200 space-y-2">
+                          <span className="text-xs font-bold text-stone-900 block">
+                            Sync All Records Now
+                          </span>
+                          <p className="text-[11px] text-stone-500">
+                            Pushes all current donations, membership registrations, volunteer dossiers, and site pillars to your active Google Spreadsheet.
+                          </p>
+                          <div className="pt-2">
+                            <button
+                              type="button"
+                              disabled={isSyncingGoogleSheet || !googleSheetConfig.spreadsheetId}
+                              onClick={async () => {
+                                try {
+                                  const count = await syncNowToGoogleSheet();
+                                  showToast(`Synced ${count} cells to Google Sheets successfully!`);
+                                } catch (err: any) {
+                                  showToast(`Error: ${err.message}`);
+                                }
+                              }}
+                              className="w-full py-2.5 px-4 bg-stone-900 hover:bg-stone-800 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                            >
+                              <RefreshCw className={`w-4 h-4 text-emerald-400 ${isSyncingGoogleSheet ? 'animate-spin' : ''}`} />
+                              <span>{isSyncingGoogleSheet ? 'Syncing Tables...' : 'Sync All Tables to Google Sheets'}</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Manual Linker */}
+                      <div className="p-3 bg-stone-50 rounded-2xl border border-stone-200 flex flex-col sm:flex-row items-center gap-2">
+                        <span className="text-xs font-medium text-stone-600 whitespace-nowrap">
+                          Or link existing Sheet ID/URL:
+                        </span>
+                        <input
+                          type="text"
+                          value={manualSheetId}
+                          onChange={(e) => setManualSheetId(e.target.value)}
+                          placeholder="e.g. 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
+                          className="flex-1 px-3 py-1.5 bg-white border border-stone-300 rounded-xl text-xs font-mono text-stone-900 w-full"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!manualSheetId.trim()) return;
+                            setGoogleSpreadsheetId(manualSheetId);
+                            setManualSheetId('');
+                            showToast('Linked custom Google Spreadsheet!');
+                          }}
+                          className="px-3 py-1.5 bg-stone-800 hover:bg-stone-700 text-white rounded-xl text-xs font-semibold whitespace-nowrap"
+                        >
+                          Link Sheet
+                        </button>
+                      </div>
+
+                      {syncStatusMessage && (
+                        <div className="p-2.5 rounded-xl bg-stone-100 text-[11px] font-mono text-stone-700 flex items-center gap-2">
+                          <Info className="w-3.5 h-3.5 text-stone-500 shrink-0" />
+                          <span>{syncStatusMessage}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* 9 Sheets Tab Directory Overview */}
+                  <div className="pt-2 border-t border-stone-100">
+                    <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider block mb-2">
+                      Master Spreadsheet Tabs Structure (9 Separate Sheets):
+                    </span>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                      {[
+                        { name: 'Donations_Pledges', count: `${donations.length} records` },
+                        { name: 'Lifetime_Memberships', count: `${memberships.length} members` },
+                        { name: 'Volunteer_Corps', count: `${volunteers.length} volunteers` },
+                        { name: 'Gift_Certificates', count: `${giftCards.length} cards` },
+                        { name: 'Newsletter_Subscribers', count: `${subscribers.length} emails` },
+                        { name: 'Trust_16_Pillars', count: `${content.pillars.length} pillars` },
+                        { name: 'Relief_Campaigns', count: `${content.campaigns.length} drives` },
+                        { name: 'Official_Notices', count: `${content.notices.length} notices` },
+                        { name: 'Trust_Settings', count: '15 keys' },
+                      ].map((tab, idx) => (
+                        <div key={idx} className="p-2 rounded-xl bg-stone-50 border border-stone-200 flex items-center justify-between">
+                          <span className="font-mono text-[11px] font-medium text-stone-800">{tab.name}</span>
+                          <span className="text-[10px] text-stone-500 bg-white px-1.5 py-0.5 rounded border border-stone-200">{tab.count}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. SEPARATE CSV FILE DATABASE ENGINE */}
+                <div className="bg-white p-5 sm:p-6 rounded-3xl border border-stone-200 shadow-xs space-y-4">
+                  <div className="flex items-center gap-3 border-b border-stone-100 pb-3">
+                    <div className="w-10 h-10 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-800">
+                      <Table className="w-5 h-5 text-amber-700" />
+                    </div>
+                    <div>
+                      <h4 className="font-serif font-bold text-base text-stone-900">
+                        Separate CSV File Database (Instant Downloads)
+                      </h4>
+                      <p className="text-xs text-stone-500">
+                        Export individual database tables as RFC 4180 compliant CSV files with full utf-8 character support
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Individual CSV Download Cards */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    {[
+                      { id: 'donations' as CsvTableType, title: 'Donations Table', filename: 'donations.csv', count: donations.length, label: 'Donation Records' },
+                      { id: 'memberships' as CsvTableType, title: 'Memberships Table', filename: 'memberships.csv', count: memberships.length, label: 'Lifetime Members' },
+                      { id: 'volunteers' as CsvTableType, title: 'Volunteers Table', filename: 'volunteers.csv', count: volunteers.length, label: 'Corps Registrations' },
+                      { id: 'giftCards' as CsvTableType, title: 'Gift Cards Table', filename: 'gift_cards.csv', count: giftCards.length, label: 'Certificates' },
+                      { id: 'subscribers' as CsvTableType, title: 'Subscribers Table', filename: 'subscribers.csv', count: subscribers.length, label: 'Email Subscribers' },
+                      { id: 'pillars' as CsvTableType, title: '16 Pillars Table', filename: 'pillars.csv', count: content.pillars.length, label: 'Action Pillars' },
+                      { id: 'campaigns' as CsvTableType, title: 'Campaigns Table', filename: 'campaigns.csv', count: content.campaigns.length, label: 'Relief Drives' },
+                      { id: 'notices' as CsvTableType, title: 'Notices Table', filename: 'notices.csv', count: content.notices.length, label: 'Official Gazettes' }
+                    ].map(tbl => (
+                      <div key={tbl.id} className="p-3 bg-stone-50 rounded-2xl border border-stone-200 flex flex-col justify-between hover:border-emerald-300 transition-colors">
+                        <div>
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-xs text-stone-900">{tbl.title}</span>
+                            <span className="text-[10px] font-mono text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                              {tbl.count}
+                            </span>
+                          </div>
+                          <span className="text-[11px] text-stone-500 block mt-0.5 font-mono">{tbl.filename}</span>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            downloadTableCsv(tbl.id);
+                            showToast(`Downloaded ${tbl.filename}`);
+                          }}
+                          className="mt-3 w-full py-1.5 px-3 bg-white hover:bg-stone-100 text-stone-800 rounded-xl text-xs font-semibold border border-stone-300 flex items-center justify-center gap-1.5 transition-colors"
+                        >
+                          <FileDown className="w-3.5 h-3.5 text-emerald-700" />
+                          <span>Download CSV</span>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Complete Consolidated Archive Button */}
+                  <div className="pt-2 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        downloadTableCsv('all');
+                        showToast('Complete Master Database CSV downloaded!');
+                      }}
+                      className="px-4 py-2.5 bg-stone-900 hover:bg-stone-800 text-amber-300 rounded-xl text-xs font-bold flex items-center gap-2 shadow-xs transition-colors"
+                    >
+                      <Download className="w-4 h-4 text-amber-300" />
+                      <span>Download Consolidated Database Archive (All Tables CSV)</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* 3. CSV IMPORT & RESTORE TOOL */}
+                <div className="bg-white p-5 sm:p-6 rounded-3xl border border-stone-200 shadow-xs space-y-4">
+                  <div className="flex items-center gap-3 border-b border-stone-100 pb-3">
+                    <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-800">
+                      <FileUp className="w-5 h-5 text-blue-700" />
+                    </div>
+                    <div>
+                      <h4 className="font-serif font-bold text-base text-stone-900">
+                        CSV File Import & Table Restorer
+                      </h4>
+                      <p className="text-xs text-stone-500">
+                        Upload or paste comma-separated values to append or restore records into the database
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                      <div className="flex-1">
+                        <label className="block text-xs font-semibold text-stone-700 mb-1">
+                          Select Target Table
+                        </label>
+                        <select
+                          value={selectedCsvType}
+                          onChange={(e) => setSelectedCsvType(e.target.value as CsvTableType)}
+                          className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-xl text-xs text-stone-900"
+                        >
+                          <option value="donations">Donations Table</option>
+                          <option value="memberships">Lifetime Memberships Table</option>
+                          <option value="subscribers">Newsletter Subscribers Table</option>
+                        </select>
+                      </div>
+
+                      <div className="flex-1">
+                        <label className="block text-xs font-semibold text-stone-700 mb-1">
+                          Or Choose Local CSV File
+                        </label>
+                        <input
+                          type="file"
+                          accept=".csv"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = (event) => {
+                                const text = event.target?.result as string;
+                                setCsvInputContent(text || '');
+                              };
+                              reader.readAsText(file);
+                            }
+                          }}
+                          className="w-full text-xs text-stone-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-stone-100 file:text-stone-700 hover:file:bg-stone-200"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-stone-700 mb-1">
+                        Raw CSV Data
+                      </label>
+                      <textarea
+                        rows={4}
+                        value={csvInputContent}
+                        onChange={(e) => setCsvInputContent(e.target.value)}
+                        placeholder="Receipt No,Date,Donor Name,Donor Email,Donor Phone,Amount (BDT),Campaign / Cause,Payment Method,Status,Anonymous&#10;ACT-DON-9921,October 31, 2026,Rahim Uddin,rahim@example.com,+880 1711,5000,Cataract Surgery,bKash,Verified,No"
+                        className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-xl text-xs font-mono text-stone-900 focus:bg-white"
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      {csvResultNotice && (
+                        <span className="text-xs font-semibold text-emerald-800">
+                          {csvResultNotice}
+                        </span>
+                      )}
+                      <div className="ml-auto">
+                        <button
+                          type="button"
+                          disabled={!csvInputContent.trim()}
+                          onClick={() => {
+                            const result = importTableCsv(selectedCsvType, csvInputContent);
+                            setCsvResultNotice(result.message);
+                            if (result.success) {
+                              setCsvInputContent('');
+                              showToast(result.message);
+                            }
+                          }}
+                          className="px-4 py-2 bg-emerald-800 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 disabled:opacity-50 transition-colors"
+                        >
+                          <FileUp className="w-3.5 h-3.5" />
+                          <span>Parse & Import Records</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            )}
+
+            {/* ======================================================== */}
+            {/* TAB 12: BACKUP, EXPORT & RESET                           */}
             {/* ======================================================== */}
             {activeAdminTab === 'backup' && (
               <div className="max-w-3xl space-y-6">

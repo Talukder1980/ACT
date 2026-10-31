@@ -18,6 +18,7 @@ import { generateQrDataUrl } from '../utils/qrGenerator';
 import { MemberRecord } from '../types';
 import { MEMBERSHIP_FEE_BDT, TRUST_NAME, TRUST_MOTTO, TRUST_LOGO_SRC, bangladeshDistricts } from '../data/mockData';
 import { TrustLogo } from './TrustLogo';
+import { useContent } from '../context/ContentContext';
 
 interface MembershipSectionProps {
   onOpenShare: (title: string, text: string) => void;
@@ -25,6 +26,7 @@ interface MembershipSectionProps {
 }
 
 export const MembershipSection: React.FC<MembershipSectionProps> = ({ onOpenShare, onOpenQr }) => {
+  const { addMemberRecord } = useContent();
   const [activeTab, setActiveTab] = useState<'register' | 'certificate' | 'verify'>('register');
   
   // Registration Form State
@@ -116,6 +118,8 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onOpenShar
 
       setMembersRegistry(prev => [newMember, ...prev]);
       setCurrentMember(newMember);
+      // Persist to separate operational database and Google Sheet sync queue
+      addMemberRecord(newMember);
       setIsProcessing(false);
       setActiveTab('certificate');
 
