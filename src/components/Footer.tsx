@@ -15,8 +15,7 @@ import {
   Linkedin,
   Lock,
   Scale,
-  FileText,
-  Settings
+  FileText
 } from 'lucide-react';
 import { useContent } from '../context/ContentContext';
 import { TrustLogo } from './TrustLogo';
@@ -71,27 +70,13 @@ export const Footer: React.FC<FooterProps> = ({
               </span>
             </div>
 
-            <div className="pt-2 flex flex-wrap items-center gap-2">
+            <div className="pt-2 flex items-center gap-2">
               <button
                 onClick={onOpenQr}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-white text-xs font-semibold border border-stone-700 transition-colors"
               >
                 <QrCode className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Event & Printed QR Code</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  if (isAdminLoggedIn) {
-                    setIsAdminPanelOpen(true);
-                  } else {
-                    setIsLoginModalOpen(true);
-                  }
-                }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-amber-300 text-xs font-semibold border border-stone-700 transition-colors"
-              >
-                <Settings className="w-3.5 h-3.5 text-amber-300" />
-                <span>{isAdminLoggedIn ? 'Trustee CMS Panel' : 'Trustee Login'}</span>
               </button>
             </div>
           </div>
@@ -193,7 +178,17 @@ export const Footer: React.FC<FooterProps> = ({
                 <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>{content.general.email}</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div 
+                className="flex items-center gap-2 cursor-default select-none"
+                onDoubleClick={() => {
+                  if (isAdminLoggedIn) {
+                    setIsAdminPanelOpen(true);
+                  } else {
+                    setIsLoginModalOpen(true);
+                  }
+                }}
+                title=""
+              >
                 <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>Govt. Trust Deed Registration No. {content.general.regNumber}</span>
               </div>
@@ -271,20 +266,6 @@ export const Footer: React.FC<FooterProps> = ({
             <span>Non-Discrimination Policy</span>
             <span>·</span>
             <span>Tax Exemption SRO No. 192</span>
-            <span>·</span>
-            <button
-              onClick={() => {
-                if (isAdminLoggedIn) {
-                  setIsAdminPanelOpen(true);
-                } else {
-                  setIsLoginModalOpen(true);
-                }
-              }}
-              className="text-amber-400 hover:text-amber-300 font-semibold underline-offset-4 hover:underline flex items-center gap-1"
-            >
-              <Settings className="w-3 h-3" />
-              <span>Trustee CMS Portal</span>
-            </button>
           </div>
         </div>
 

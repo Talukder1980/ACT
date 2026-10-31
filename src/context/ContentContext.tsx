@@ -222,6 +222,45 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   }, [content]);
 
+  // Discreet triggers: Keyboard shortcut (Ctrl+Shift+A) and URL parameter (?admin or #admin)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl+Shift+A or Cmd+Shift+A
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        e.preventDefault();
+        if (isAdminLoggedIn) {
+          setIsAdminPanelOpen(prev => !prev);
+        } else {
+          setIsLoginModalOpen(prev => !prev);
+        }
+      }
+    };
+
+    const checkUrlTrigger = () => {
+      try {
+        const url = new URL(window.location.href);
+        if (url.searchParams.has('admin') || url.hash === '#admin' || url.hash === '#trustee') {
+          if (!isAdminLoggedIn) {
+            setIsLoginModalOpen(true);
+          } else {
+            setIsAdminPanelOpen(true);
+          }
+        }
+      } catch {
+        // ignore
+      }
+    };
+
+    checkUrlTrigger();
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('hashchange', checkUrlTrigger);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('hashchange', checkUrlTrigger);
+    };
+  }, [isAdminLoggedIn]);
+
   // Sync authentication state
   const loginAdmin = (passkey: string): boolean => {
     const clean = passkey.trim();
