@@ -23,19 +23,22 @@ import { BuildingGiftTier, BuildingGiftRecord } from '../types';
 import { TRUST_NAME, TRUST_MOTTO, TRUST_LOGO_SRC } from '../data/mockData';
 import { generateQrDataUrl } from '../utils/qrGenerator';
 import { TrustLogo } from './TrustLogo';
+import { useContent } from '../context/ContentContext';
 
 interface OrphanageWidowsBuildingSectionProps {
   onOpenShare: (title: string, text: string) => void;
 }
 
 export const OrphanageWidowsBuildingSection: React.FC<OrphanageWidowsBuildingSectionProps> = ({ onOpenShare }) => {
+  const { content, isAdminLoggedIn, openAdminTab } = useContent();
+  const bp = content.buildingProject;
   const [currency, setCurrency] = useState<'BDT' | 'USD'>('BDT');
   const BDT_TO_USD = 120;
 
-  // Tracker State for the Building
-  const [targetBDT, setTargetBDT] = useState<number>(6000000); // ৳60 Lakh BDT (~$50,000 USD)
-  const [raisedBDT, setRaisedBDT] = useState<number>(4380000); // ৳43.8 Lakh BDT (~$36,500 USD)
-  const [totalBuildingDonors, setTotalBuildingDonors] = useState<number>(584);
+  // Tracker State for the Building from CMS
+  const targetBDT = bp.targetBDT;
+  const [raisedBDT, setRaisedBDT] = useState<number>(bp.raisedBDT);
+  const [totalBuildingDonors, setTotalBuildingDonors] = useState<number>(bp.donorsCount);
   const [bricksGifted, setBricksGifted] = useState<number>(24500);
 
   // Construction Stages
@@ -251,18 +254,27 @@ export const OrphanageWidowsBuildingSection: React.FC<OrphanageWidowsBuildingSec
         
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold mb-3 shadow-xs">
-            <Building2 className="w-4 h-4 text-amber-800" />
-            <span>Special Capital Endowment Project</span>
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold shadow-xs">
+              <Building2 className="w-4 h-4 text-amber-800" />
+              <span>Special Capital Endowment Project</span>
+            </div>
+            {isAdminLoggedIn && (
+              <button
+                onClick={() => openAdminTab('building')}
+                className="text-[10px] font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-300"
+              >
+                <Building2 className="w-3 h-3" />
+                <span>Edit Sanctuary CMS</span>
+              </button>
+            )}
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-stone-900 tracking-tight leading-tight">
-            Special Gift for Orphanage & Widows Home Building
+            {bp.title}
           </h2>
           <div className="w-20 h-1 bg-amber-600 mx-auto mt-4 mb-4 rounded-full" />
           <p className="text-base sm:text-lg text-stone-700 leading-relaxed font-sans">
-            A permanent sanctuary under construction in Bangladesh to provide loving shelter, nourishment, medical care, 
-            and education for <strong>80 orphan children</strong> and <strong>50 destitute elderly widows</strong>. 
-            Dedicate bricks, rooms, and perpetual Sadaqah Jariyah in honor of your loved ones.
+            {bp.narrative}
           </p>
 
           {/* Official Website-Only Gifting Advisory Note */}
@@ -281,7 +293,7 @@ export const OrphanageWidowsBuildingSection: React.FC<OrphanageWidowsBuildingSec
           <div className="lg:col-span-6 relative">
             <div className="relative rounded-3xl overflow-hidden border-2 border-stone-300 shadow-xl bg-stone-900 group">
               <img
-                src="/src/assets/images/building_orphanage_widows_1791220922823.jpg"
+                src={bp.imageSrc}
                 alt="Sanctuary of Dignity Orphanage and Widows Home construction site in Bangladesh"
                 className="w-full h-80 sm:h-[420px] object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 referrerPolicy="no-referrer"

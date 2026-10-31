@@ -10,7 +10,8 @@ import {
   Sparkles,
   QrCode,
   DollarSign,
-  ShieldCheck
+  ShieldCheck,
+  Edit3
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { INITIAL_CAMPAIGNS, INITIAL_RECENT_DONORS } from '../data/mockData';
@@ -18,6 +19,7 @@ import { Campaign, DonorContribution } from '../types';
 import { generateQrDataUrl } from '../utils/qrGenerator';
 import { TrustLogo } from './TrustLogo';
 import { ImpactCounter } from './ImpactCounter';
+import { useContent } from '../context/ContentContext';
 
 interface DonationTrackerProps {
   onOpenShare: (title: string, text: string) => void;
@@ -30,7 +32,8 @@ export const DonationTracker: React.FC<DonationTrackerProps> = ({
   onOpenQr,
   targetCausePreselect
 }) => {
-  const [campaigns, setCampaigns] = useState<Campaign[]>(INITIAL_CAMPAIGNS);
+  const { content, updateCampaign, isAdminLoggedIn, openAdminTab } = useContent();
+  const campaigns = content.campaigns;
   const [recentDonors, setRecentDonors] = useState<DonorContribution[]>(INITIAL_RECENT_DONORS);
   const [currency, setCurrency] = useState<'BDT' | 'USD'>('BDT'); // 1 USD ~ 120 BDT
   const BDT_TO_USD = 120;
@@ -86,17 +89,11 @@ export const DonationTracker: React.FC<DonationTrackerProps> = ({
     const qrUrl = await generateQrDataUrl(`https://afzalcharitabletrust.org.bd/receipt/${receiptNo}`, 160);
 
     setTimeout(() => {
-      // Update Campaign raised amount
-      setCampaigns(prev => prev.map(c => {
-        if (c.id === activeCampaignForDonation.id) {
-          return {
-            ...c,
-            raisedBDT: c.raisedBDT + finalAmount,
-            donorsCount: c.donorsCount + 1
-          };
-        }
-        return c;
-      }));
+      // Update Campaign raised amount via CMS context
+      updateCampaign(activeCampaignForDonation.id, {
+        raisedBDT: activeCampaignForDonation.raisedBDT + finalAmount,
+        donorsCount: activeCampaignForDonation.donorsCount + 1
+      });
 
       // Add to recent donors
       setRecentDonors(prev => [
@@ -145,8 +142,19 @@ export const DonationTracker: React.FC<DonationTrackerProps> = ({
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
           <div className="max-w-2xl">
-            <div className="text-xs uppercase tracking-widest font-semibold text-emerald-800 mb-2">
-              Radical Philanthropic Transparency
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs uppercase tracking-widest font-semibold text-emerald-800">
+                Radical Philanthropic Transparency
+              </span>
+              {isAdminLoggedIn && (
+                <button
+                  onClick={() => openAdminTab('campaigns')}
+                  className="text-[10px] font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-300"
+                >
+                  <Edit3 className="w-3 h-3" />
+                  <span>Edit Relief Drives</span>
+                </button>
+              )}
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-stone-900 tracking-tight">
               Donation Progress Tracker & Live Impact Drives

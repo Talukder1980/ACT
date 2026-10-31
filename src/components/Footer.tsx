@@ -15,9 +15,10 @@ import {
   Linkedin,
   Lock,
   Scale,
-  FileText
+  FileText,
+  Settings
 } from 'lucide-react';
-import { TRUST_NAME, TRUST_MOTTO, TRUST_ESTABLISHED } from '../data/mockData';
+import { useContent } from '../context/ContentContext';
 import { TrustLogo } from './TrustLogo';
 import { LegalModal } from './LegalModal';
 
@@ -34,6 +35,7 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenDonate,
   onOpenShare,
 }) => {
+  const { content, isAdminLoggedIn, setIsAdminPanelOpen, setIsLoginModalOpen } = useContent();
   const [legalModalOpen, setLegalModalOpen] = useState(false);
   const [legalModalTab, setLegalModalTab] = useState<'privacy' | 'terms'>('privacy');
 
@@ -59,7 +61,7 @@ export const Footer: React.FC<FooterProps> = ({
             </p>
 
             <div className="text-xs text-amber-300/90 font-serif italic">
-              {TRUST_MOTTO}
+              {content.general.trustMotto}
             </div>
 
             <div className="p-3 bg-stone-800/80 rounded-xl border border-stone-700 text-xs text-stone-300 flex items-start gap-2">
@@ -69,13 +71,27 @@ export const Footer: React.FC<FooterProps> = ({
               </span>
             </div>
 
-            <div className="pt-2 flex items-center gap-2">
+            <div className="pt-2 flex flex-wrap items-center gap-2">
               <button
                 onClick={onOpenQr}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-white text-xs font-semibold border border-stone-700 transition-colors"
               >
                 <QrCode className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Event & Printed QR Code</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  if (isAdminLoggedIn) {
+                    setIsAdminPanelOpen(true);
+                  } else {
+                    setIsLoginModalOpen(true);
+                  }
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-amber-300 text-xs font-semibold border border-stone-700 transition-colors"
+              >
+                <Settings className="w-3.5 h-3.5 text-amber-300" />
+                <span>{isAdminLoggedIn ? 'Trustee CMS Panel' : 'Trustee Login'}</span>
               </button>
             </div>
           </div>
@@ -166,20 +182,20 @@ export const Footer: React.FC<FooterProps> = ({
               <div className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                 <span>
-                  Trust Bhaban, Level 4, Plot 12, Road 7, Dhanmondi, Dhaka-1205, Bangladesh
+                  {content.general.address}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>+880 2 9876543 / +880 1712 000000</span>
+                <span>{content.general.phone}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>info@afzalcharitabletrust.org.bd</span>
+                <span>{content.general.email}</span>
               </div>
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Govt. Trust Deed Registration No. TR-4821</span>
+                <span>Govt. Trust Deed Registration No. {content.general.regNumber}</span>
               </div>
             </div>
           </div>
@@ -195,8 +211,8 @@ export const Footer: React.FC<FooterProps> = ({
             <div className="flex items-center gap-2 pt-1">
               <button
                 onClick={() => onOpenShare(
-                  'Afzal Charitable Trust',
-                  'Support Afzal Charitable Trust: Transforming lives across Bangladesh through education, healthcare, and poverty relief.'
+                  content.general.trustName,
+                  `Support ${content.general.trustName}: Transforming lives across Bangladesh through education, healthcare, and poverty relief.`
                 )}
                 className="p-2 rounded-lg bg-stone-800 hover:bg-emerald-900 text-stone-300 hover:text-white transition-colors"
                 title="Share Trust Website"
@@ -204,21 +220,21 @@ export const Footer: React.FC<FooterProps> = ({
                 <MessageCircle className="w-4 h-4" />
               </button>
               <button
-                onClick={() => onOpenShare('Afzal Charitable Trust', 'Check out the noble initiatives of Afzal Charitable Trust in Bangladesh!')}
+                onClick={() => onOpenShare(content.general.trustName, `Check out the noble initiatives of ${content.general.trustName} in Bangladesh!`)}
                 className="p-2 rounded-lg bg-stone-800 hover:bg-blue-900 text-stone-300 hover:text-white transition-colors"
                 title="Share on Facebook"
               >
                 <Facebook className="w-4 h-4" />
               </button>
               <button
-                onClick={() => onOpenShare('Afzal Charitable Trust', 'Empowering communities across Bangladesh with Afzal Charitable Trust.')}
+                onClick={() => onOpenShare(content.general.trustName, `Empowering communities across Bangladesh with ${content.general.trustName}.`)}
                 className="p-2 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-white transition-colors"
                 title="Share on X"
               >
                 <Twitter className="w-4 h-4" />
               </button>
               <button
-                onClick={() => onOpenShare('Afzal Charitable Trust', 'Discover the humanitarian programs of Afzal Charitable Trust.')}
+                onClick={() => onOpenShare(content.general.trustName, `Discover the humanitarian programs of ${content.general.trustName}.`)}
                 className="p-2 rounded-lg bg-stone-800 hover:bg-sky-900 text-stone-300 hover:text-white transition-colors"
                 title="Share on LinkedIn"
               >
@@ -232,7 +248,7 @@ export const Footer: React.FC<FooterProps> = ({
         {/* Bottom Sub-Footer */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-500">
           <div>
-            © {new Date().getFullYear()} {TRUST_NAME}. All rights reserved. Operated under solemn humanitarian charter in Bangladesh.
+            © {new Date().getFullYear()} {content.general.trustName}. All rights reserved. Operated under solemn humanitarian charter in Bangladesh.
           </div>
           
           <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[11px]">
@@ -255,6 +271,20 @@ export const Footer: React.FC<FooterProps> = ({
             <span>Non-Discrimination Policy</span>
             <span>·</span>
             <span>Tax Exemption SRO No. 192</span>
+            <span>·</span>
+            <button
+              onClick={() => {
+                if (isAdminLoggedIn) {
+                  setIsAdminPanelOpen(true);
+                } else {
+                  setIsLoginModalOpen(true);
+                }
+              }}
+              className="text-amber-400 hover:text-amber-300 font-semibold underline-offset-4 hover:underline flex items-center gap-1"
+            >
+              <Settings className="w-3 h-3" />
+              <span>Trustee CMS Portal</span>
+            </button>
           </div>
         </div>
 

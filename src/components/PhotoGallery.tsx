@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
-import { Camera, MapPin, Calendar, Users, Share2, Maximize2, X, ArrowUpRight } from 'lucide-react';
+import { Camera, MapPin, Calendar, Users, Share2, Maximize2, X, ArrowUpRight, Edit3 } from 'lucide-react';
 import { GALLERY_PHOTOS } from '../data/mockData';
 import { GalleryPhoto } from '../types';
+import { useContent } from '../context/ContentContext';
 
 interface PhotoGalleryProps {
   onOpenShare: (title: string, text: string) => void;
 }
 
 export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onOpenShare }) => {
+  const { content, isAdminLoggedIn, openAdminTab } = useContent();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [activePhoto, setActivePhoto] = useState<GalleryPhoto | null>(null);
 
   const categories = ['All', 'Education', 'Healthcare', 'Poverty Relief', 'Empowerment'];
 
-  const filteredPhotos = GALLERY_PHOTOS.filter(photo => {
+  const filteredPhotos = content.gallery.filter(photo => {
     return selectedCategory === 'All' || photo.category === selectedCategory;
   });
 
@@ -24,9 +26,20 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onOpenShare }) => {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
           <div className="max-w-2xl">
-            <div className="text-xs uppercase tracking-widest font-semibold text-emerald-800 mb-2 flex items-center gap-1.5">
-              <Camera className="w-3.5 h-3.5 text-emerald-700" />
-              <span>Documentary Field Archive</span>
+            <div className="text-xs uppercase tracking-widest font-semibold text-emerald-800 mb-2 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5">
+                <Camera className="w-3.5 h-3.5 text-emerald-700" />
+                <span>Documentary Field Archive</span>
+              </div>
+              {isAdminLoggedIn && (
+                <button
+                  onClick={() => openAdminTab('gallery')}
+                  className="text-[10px] font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-300"
+                >
+                  <Edit3 className="w-3 h-3" />
+                  <span>Manage Gallery</span>
+                </button>
+              )}
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-stone-900 tracking-tight">
               Real-World Impact & Voices Across Bangladesh

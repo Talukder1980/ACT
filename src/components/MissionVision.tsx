@@ -1,16 +1,30 @@
 import React from 'react';
-import { Target, Compass, CheckCircle, ShieldCheck } from 'lucide-react';
-import { MISSION_STATEMENT, VISION_STATEMENT } from '../data/mockData';
+import { Target, Compass, CheckCircle, ShieldCheck, Edit3 } from 'lucide-react';
+import { useContent } from '../context/ContentContext';
 
 export const MissionVision: React.FC = () => {
+  const { content, isAdminLoggedIn, openAdminTab } = useContent();
+  const mv = content.missionVision;
+
   return (
     <section className="py-16 sm:py-20 bg-stone-50 border-b border-stone-200" id="mission-vision">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
-          <div className="text-xs uppercase tracking-widest font-semibold text-emerald-800 mb-2">
-            Foundational Charter & Principles
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <span className="text-xs uppercase tracking-widest font-semibold text-emerald-800">
+              Foundational Charter & Principles
+            </span>
+            {isAdminLoggedIn && (
+              <button
+                onClick={() => openAdminTab('mission')}
+                className="text-[10px] font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-300"
+              >
+                <Edit3 className="w-3 h-3" />
+                <span>Edit Statements</span>
+              </button>
+            )}
           </div>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-stone-900 tracking-tight">
             Our Solemn Pledge to the People of Bangladesh
@@ -32,7 +46,7 @@ export const MissionVision: React.FC = () => {
                     <Target className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-serif font-bold text-xl text-stone-900">Our Mission</h3>
+                    <h3 className="font-serif font-bold text-xl text-stone-900">{mv.missionTitle}</h3>
                     <span className="text-xs text-stone-500">Dedicated Service Across 64 Districts</span>
                   </div>
                 </div>
@@ -41,10 +55,10 @@ export const MissionVision: React.FC = () => {
                 </span>
               </div>
 
-              {/* Exact Mission Statement as specified by user */}
+              {/* Exact Mission Statement from CMS */}
               <blockquote className="text-stone-700 text-sm sm:text-base leading-relaxed font-sans pt-2">
                 <span className="text-2xl font-serif text-emerald-800 font-bold mr-1">“</span>
-                {MISSION_STATEMENT}
+                {mv.missionStatement}
                 <span className="text-2xl font-serif text-emerald-800 font-bold ml-1">”</span>
               </blockquote>
             </div>
@@ -66,7 +80,7 @@ export const MissionVision: React.FC = () => {
                     <Compass className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-serif font-bold text-xl text-stone-900">Our Vision</h3>
+                    <h3 className="font-serif font-bold text-xl text-stone-900">{mv.visionTitle}</h3>
                     <span className="text-xs text-stone-500">A Just, Equitable & Compassionate Future</span>
                   </div>
                 </div>
@@ -75,10 +89,10 @@ export const MissionVision: React.FC = () => {
                 </span>
               </div>
 
-              {/* Exact Vision Statement as specified by user */}
+              {/* Exact Vision Statement from CMS */}
               <blockquote className="text-stone-700 text-sm sm:text-base leading-relaxed font-sans pt-2">
                 <span className="text-2xl font-serif text-amber-600 font-bold mr-1">“</span>
-                {VISION_STATEMENT}
+                {mv.visionStatement}
                 <span className="text-2xl font-serif text-amber-600 font-bold ml-1">”</span>
               </blockquote>
             </div>

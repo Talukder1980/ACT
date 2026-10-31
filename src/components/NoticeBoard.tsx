@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { FileText, Bell, Search, Printer, Share2, Download, ArrowRight, X, AlertTriangle } from 'lucide-react';
+import { FileText, Bell, Search, Printer, Share2, Download, ArrowRight, X, AlertTriangle, Edit3 } from 'lucide-react';
 import { INITIAL_NOTICES, TRUST_NAME } from '../data/mockData';
 import { Notice } from '../types';
 import { TrustLogo } from './TrustLogo';
+import { useContent } from '../context/ContentContext';
 
 interface NoticeBoardProps {
   onOpenShare: (title: string, text: string) => void;
 }
 
 export const NoticeBoard: React.FC<NoticeBoardProps> = ({ onOpenShare }) => {
-  const [notices, setNotices] = useState<Notice[]>(INITIAL_NOTICES);
+  const { content, isAdminLoggedIn, openAdminTab } = useContent();
+  const notices = content.notices;
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeNoticeModal, setActiveNoticeModal] = useState<Notice | null>(null);
@@ -32,9 +34,20 @@ export const NoticeBoard: React.FC<NoticeBoardProps> = ({ onOpenShare }) => {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
           <div className="max-w-2xl">
-            <div className="text-xs uppercase tracking-widest font-semibold text-emerald-800 mb-2 flex items-center gap-1.5">
-              <Bell className="w-3.5 h-3.5 text-emerald-700" />
-              <span>Official Communications</span>
+            <div className="text-xs uppercase tracking-widest font-semibold text-emerald-800 mb-2 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5">
+                <Bell className="w-3.5 h-3.5 text-emerald-700" />
+                <span>Official Communications</span>
+              </div>
+              {isAdminLoggedIn && (
+                <button
+                  onClick={() => openAdminTab('notices')}
+                  className="text-[10px] font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-300"
+                >
+                  <Edit3 className="w-3 h-3" />
+                  <span>Publish / Edit Notices</span>
+                </button>
+              )}
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-stone-900 tracking-tight">
               Trust Notice Board & Gazettes

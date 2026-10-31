@@ -4,6 +4,7 @@
  */
 
 import React, { useState } from 'react';
+import { ContentProvider } from './context/ContentContext';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { MissionVision } from './components/MissionVision';
@@ -22,6 +23,9 @@ import { QRCodeModal } from './components/QRCodeModal';
 import { SocialShareModal } from './components/SocialShareModal';
 import { AccessibilityToolbar } from './components/AccessibilityToolbar';
 import { LiveChatWidget } from './components/LiveChatWidget';
+import { AdminModal } from './components/AdminModal';
+import { AdminLoginModal } from './components/AdminLoginModal';
+import { AdminFloatingToolbar } from './components/AdminFloatingToolbar';
 
 export default function App() {
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
@@ -68,119 +72,130 @@ export default function App() {
   const contrastClass = highContrast ? 'contrast-125 saturate-125' : '';
 
   return (
-    <div className={`min-h-screen flex flex-col bg-[#FAFAF8] text-[#1C1917] ${fontSizeClass} ${contrastClass}`}>
-      {/* Skip to Content for Screen Readers & Keyboard navigation */}
-      <a 
-        href="#main-content" 
-        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:p-3 focus:bg-emerald-900 focus:text-white rounded-lg font-bold"
-      >
-        Skip to main content
-      </a>
+    <ContentProvider>
+      <div className={`min-h-screen flex flex-col bg-[#FAFAF8] text-[#1C1917] ${fontSizeClass} ${contrastClass}`}>
+        {/* Skip to Content for Screen Readers & Keyboard navigation */}
+        <a 
+          href="#main-content" 
+          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:p-3 focus:bg-emerald-900 focus:text-white rounded-lg font-bold"
+        >
+          Skip to main content
+        </a>
 
-      {/* Top Bar Navigation */}
-      <Navbar
-        onOpenQr={handleOpenQr}
-        onOpenMembership={() => handleScrollTo('membership')}
-        onOpenDonate={() => handleScrollTo('donations')}
-      />
-
-      <main id="main-content" className="flex-1">
-        {/* 1. Hero Section */}
-        <Hero
+        {/* Top Bar Navigation */}
+        <Navbar
+          onOpenQr={handleOpenQr}
           onOpenMembership={() => handleScrollTo('membership')}
           onOpenDonate={() => handleScrollTo('donations')}
+        />
+
+        <main id="main-content" className="flex-1">
+          {/* 1. Hero Section */}
+          <Hero
+            onOpenMembership={() => handleScrollTo('membership')}
+            onOpenDonate={() => handleScrollTo('donations')}
+            onOpenQr={handleOpenQr}
+          />
+
+          {/* 2. Official Mission & Vision Statements */}
+          <MissionVision />
+
+          {/* 3. 16 Core Pillars of Action */}
+          <PillarsGrid
+            onOpenDonate={(cause) => handleScrollTo('donations')}
+            onOpenShare={handleOpenShare}
+          />
+
+          {/* 4. Special Gift for Orphanage & Widows Home Building (with dedicated Gift Tracker) */}
+          <OrphanageWidowsBuildingSection
+            onOpenShare={handleOpenShare}
+          />
+
+          {/* 5. Membership Subscription (৳250) & Verified Certificate */}
+          <MembershipSection
+            onOpenShare={handleOpenShare}
+            onOpenQr={handleOpenQr}
+          />
+
+          {/* 5. Trust Notice Board */}
+          <NoticeBoard
+            onOpenShare={handleOpenShare}
+          />
+
+          {/* 6. Donation Progress Tracker & Live Drives */}
+          <DonationTracker
+            onOpenShare={handleOpenShare}
+            onOpenQr={handleOpenQr}
+          />
+
+          {/* 7. Tax Benefits for Donors (NBR Bangladesh Statutory Rebate & Calculator) */}
+          <TaxBenefitsSection
+            onOpenDonate={(amt) => handleScrollTo('donations')}
+            onOpenShare={handleOpenShare}
+          />
+
+          {/* 8. Documentary Photo Gallery */}
+          <PhotoGallery
+            onOpenShare={handleOpenShare}
+          />
+
+          {/* 8. Dedicated Gift Cards Pavilion ($5 - $100 in 6 Colors & Clear Fonts) */}
+          <GiftCardsSection
+            onOpenShare={handleOpenShare}
+          />
+
+          {/* 9. Volunteer Signup & Community Mobilization */}
+          <VolunteerSection
+            onOpenShare={handleOpenShare}
+          />
+
+          {/* 10. Monthly Email Newsletter Subscription Form */}
+          <NewsletterSubscription />
+        </main>
+
+        {/* 11. Institutional Footer */}
+        <Footer
           onOpenQr={handleOpenQr}
-        />
-
-        {/* 2. Official Mission & Vision Statements */}
-        <MissionVision />
-
-        {/* 3. 16 Core Pillars of Action */}
-        <PillarsGrid
-          onOpenDonate={(cause) => handleScrollTo('donations')}
+          onOpenMembership={() => handleScrollTo('membership')}
+          onOpenDonate={() => handleScrollTo('donations')}
           onOpenShare={handleOpenShare}
         />
 
-        {/* 4. Special Gift for Orphanage & Widows Home Building (with dedicated Gift Tracker) */}
-        <OrphanageWidowsBuildingSection
-          onOpenShare={handleOpenShare}
+        {/* Accessible Floating Toolbar for Older Mobile Devices */}
+        <AccessibilityToolbar
+          highContrast={highContrast}
+          setHighContrast={setHighContrast}
+          fontSizeLevel={fontSizeLevel}
+          setFontSizeLevel={setFontSizeLevel}
         />
 
-        {/* 5. Membership Subscription (৳250) & Verified Certificate */}
-        <MembershipSection
-          onOpenShare={handleOpenShare}
-          onOpenQr={handleOpenQr}
+        {/* QR Code Modal for Event Scanning & Printed Materials */}
+        <QRCodeModal
+          isOpen={isQrModalOpen}
+          onClose={() => setIsQrModalOpen(false)}
         />
 
-        {/* 5. Trust Notice Board */}
-        <NoticeBoard
-          onOpenShare={handleOpenShare}
+        {/* Social Media Quick Share Modal */}
+        <SocialShareModal
+          isOpen={shareModalData.isOpen}
+          onClose={() => setShareModalData(prev => ({ ...prev, isOpen: false }))}
+          title={shareModalData.title}
+          text={shareModalData.text}
+          url={shareModalData.url}
         />
 
-        {/* 6. Donation Progress Tracker & Live Drives */}
-        <DonationTracker
-          onOpenShare={handleOpenShare}
-          onOpenQr={handleOpenQr}
-        />
+        {/* Floating Messenger & WhatsApp Live Chat Widget */}
+        <LiveChatWidget />
 
-        {/* 7. Tax Benefits for Donors (NBR Bangladesh Statutory Rebate & Calculator) */}
-        <TaxBenefitsSection
-          onOpenDonate={(amt) => handleScrollTo('donations')}
-          onOpenShare={handleOpenShare}
-        />
+        {/* Admin Floating Quick Access Badge */}
+        <AdminFloatingToolbar />
 
-        {/* 8. Documentary Photo Gallery */}
-        <PhotoGallery
-          onOpenShare={handleOpenShare}
-        />
+        {/* Admin Authentication Modal */}
+        <AdminLoginModal />
 
-        {/* 8. Dedicated Gift Cards Pavilion ($5 - $100 in 6 Colors & Clear Fonts) */}
-        <GiftCardsSection
-          onOpenShare={handleOpenShare}
-        />
-
-        {/* 9. Volunteer Signup & Community Mobilization */}
-        <VolunteerSection
-          onOpenShare={handleOpenShare}
-        />
-
-        {/* 10. Monthly Email Newsletter Subscription Form */}
-        <NewsletterSubscription />
-      </main>
-
-      {/* 11. Institutional Footer */}
-      <Footer
-        onOpenQr={handleOpenQr}
-        onOpenMembership={() => handleScrollTo('membership')}
-        onOpenDonate={() => handleScrollTo('donations')}
-        onOpenShare={handleOpenShare}
-      />
-
-      {/* Accessible Floating Toolbar for Older Mobile Devices */}
-      <AccessibilityToolbar
-        highContrast={highContrast}
-        setHighContrast={setHighContrast}
-        fontSizeLevel={fontSizeLevel}
-        setFontSizeLevel={setFontSizeLevel}
-      />
-
-      {/* QR Code Modal for Event Scanning & Printed Materials */}
-      <QRCodeModal
-        isOpen={isQrModalOpen}
-        onClose={() => setIsQrModalOpen(false)}
-      />
-
-      {/* Social Media Quick Share Modal */}
-      <SocialShareModal
-        isOpen={shareModalData.isOpen}
-        onClose={() => setShareModalData(prev => ({ ...prev, isOpen: false }))}
-        title={shareModalData.title}
-        text={shareModalData.text}
-        url={shareModalData.url}
-      />
-
-      {/* Floating Messenger & WhatsApp Live Chat Widget */}
-      <LiveChatWidget />
-    </div>
+        {/* Dedicated Full CMS Admin Panel */}
+        <AdminModal />
+      </div>
+    </ContentProvider>
   );
 }

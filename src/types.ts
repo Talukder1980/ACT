@@ -155,4 +155,90 @@ export interface VolunteerRegistration {
   joinedDate: string;
 }
 
+export interface GeneralContent {
+  trustName: string;
+  establishedYear: string;
+  estYear?: string;
+  motto: string;
+  trustMotto?: string;
+  logoSrc: string;
+  membershipFeeBDT: number;
+  taxExemptSRO: string;
+  trustDeedReg: string;
+  regNumber?: string;
+  hotlinePhone: string;
+  phone?: string;
+  contactEmail: string;
+  email?: string;
+  hqAddress: string;
+  address?: string;
+  bankName: string;
+  bankBranch: string;
+  accountName: string;
+  accountNumber: string;
+  routingNumber: string;
+  swiftCode: string;
+  bkashMerchant: string;
+}
+
+export interface HeroContent {
+  badgeText: string;
+  headline: string;
+  headlineHighlight: string;
+  subtitle: string;
+  imageSrc: string;
+  imageAlt: string;
+  captionTitle: string;
+  captionSubtitle: string;
+  primaryCtaText: string;
+  secondaryCtaText: string;
+}
+
+export interface MissionVisionContent {
+  missionTitle: string;
+  missionStatement: string;
+  missionKeyPrinciples: string[];
+  visionTitle: string;
+  visionStatement: string;
+  visionKeyGoals: string[];
+}
+
+export interface BuildingProjectContent {
+  title: string;
+  subtitle: string;
+  narrative: string;
+  targetBDT: number;
+  raisedBDT: number;
+  donorsCount: number;
+  location: string;
+  currentPhase: string;
+  completionTarget: string;
+  imageSrc: string;
+}
+
+export interface TaxBenefitsContent {
+  rebatePercent: number;
+  statutoryReference: string;
+  legalRef?: string;
+  title?: string;
+  subtitle?: string;
+  description: string;
+  faqs: Array<{ id: string; q: string; a: string }>;
+}
+
+export interface SiteContent {
+  version: number;
+  lastUpdated: string;
+  general: GeneralContent;
+  hero: HeroContent;
+  missionVision: MissionVisionContent;
+  pillars: Pillar[];
+  buildingProject: BuildingProjectContent;
+  campaigns: Campaign[];
+  notices: Notice[];
+  giftCards: GiftCardTier[];
+  taxBenefits: TaxBenefitsContent;
+  gallery: GalleryPhoto[];
+}
+
 

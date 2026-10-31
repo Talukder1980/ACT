@@ -15,9 +15,10 @@ import {
   Download,
   Percent,
   Building2,
-  Lock
+  Lock,
+  Edit3
 } from 'lucide-react';
-import { TRUST_NAME } from '../data/mockData';
+import { useContent } from '../context/ContentContext';
 import { TrustLogo } from './TrustLogo';
 
 interface TaxBenefitsSectionProps {
@@ -34,9 +35,11 @@ export const TaxBenefitsSection: React.FC<TaxBenefitsSectionProps> = ({
   const [showCertificateModal, setShowCertificateModal] = useState<boolean>(false);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
+  const { content, isAdminLoggedIn, openAdminPanel } = useContent();
+
   // Calculations in BDT
-  // Standard Individual Tax Rebate under Bangladesh Income Tax Act 2023 is generally 15% on allowable donation
-  const rebateRate = 0.15;
+  // Dynamically pulled from CMS content
+  const rebateRate = (content.taxBenefits?.rebatePercent || 15) / 100;
   const estimatedTaxRebate = Math.round(calcDonationAmount * rebateRate);
   const netEffectiveCost = Math.max(0, calcDonationAmount - estimatedTaxRebate);
 
@@ -55,7 +58,7 @@ export const TaxBenefitsSection: React.FC<TaxBenefitsSectionProps> = ({
     }
   };
 
-  const faqs = [
+  const faqs = content.taxBenefits?.faqs || [
     {
       q: 'Are donations to Afzal Charitable Trust legally tax-deductible in Bangladesh?',
       a: 'Yes. Afzal Charitable Trust is an officially registered non-profit philanthropic institution (Reg. Deed TR-4821). Donations qualify for tax rebate under the provisions of the Income Tax Act, 2023 (Sixth Schedule, Part 3, and statutory NBR notifications), allowing individual taxpayers up to a 15% rebate on eligible donations against payable income tax.'
@@ -77,24 +80,36 @@ export const TaxBenefitsSection: React.FC<TaxBenefitsSectionProps> = ({
   return (
     <section 
       id="tax-benefits" 
-      className="py-16 sm:py-20 bg-gradient-to-b from-stone-50 via-white to-stone-50 border-b border-stone-200 font-sans"
+      className="py-16 sm:py-20 bg-gradient-to-b from-stone-50 via-white to-stone-50 border-b border-stone-200 font-sans relative group"
     >
+      {/* Quick Admin Edit Button */}
+      {isAdminLoggedIn && (
+        <div className="absolute top-4 right-4 z-20">
+          <button
+            onClick={() => openAdminPanel('tax')}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-800 text-white rounded-lg text-xs font-semibold shadow-md hover:bg-emerald-900 transition-colors"
+          >
+            <Edit3 className="w-3.5 h-3.5 text-amber-300" />
+            <span>Edit Tax Benefits (CMS)</span>
+          </button>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-950 text-xs font-semibold mb-3">
             <ShieldCheck className="w-4 h-4 text-emerald-800" />
-            <span>NBR Statutory Recognition · Income Tax Act 2023 · SRO No. 192</span>
+            <span>{content.taxBenefits?.legalRef || 'NBR Statutory Recognition · Income Tax Act 2023 · SRO No. 192'}</span>
           </div>
 
           <h2 className="font-serif font-bold text-3xl sm:text-4xl text-stone-900 tracking-tight">
-            Tax Benefits for Donors in Bangladesh
+            {content.taxBenefits?.title || 'Tax Benefits for Donors in Bangladesh'}
           </h2>
 
           <p className="mt-3 text-sm sm:text-base text-stone-600 leading-relaxed">
-            Support life-changing humanitarian programs across Bangladesh while maximizing your fiscal efficiency. 
-            Contributions to <strong>{TRUST_NAME}</strong> are eligible for legitimate income tax rebates for individual and corporate taxpayers.
+            {content.taxBenefits?.subtitle || `Support life-changing humanitarian programs across Bangladesh while maximizing your fiscal efficiency. Contributions to ${content.general.trustName} are eligible for legitimate income tax rebates for individual and corporate taxpayers.`}
           </p>
         </div>
 
@@ -447,10 +462,10 @@ export const TaxBenefitsSection: React.FC<TaxBenefitsSectionProps> = ({
                     People’s Humanitarian Movement of Bangladesh
                   </span>
                   <h3 className="text-xl sm:text-2xl font-serif font-bold text-stone-900 mt-0.5">
-                    {TRUST_NAME}
+                    {content.general.trustName}
                   </h3>
                   <p className="text-[11px] text-stone-500 font-mono mt-0.5">
-                    Govt. Trust Deed Registration No. TR-4821 (Dhaka) · NBR SRO No. 192
+                    Govt. Trust Deed Registration No. {content.general.regNumber || 'TR-4821'} · {content.taxBenefits?.legalRef || 'NBR SRO No. 192'}
                   </p>
                 </div>
 
@@ -461,7 +476,7 @@ export const TaxBenefitsSection: React.FC<TaxBenefitsSectionProps> = ({
                     Official Tax Deduction Receipt & Certificate
                   </span>
                   <div className="mt-3 text-xs text-stone-700 leading-relaxed max-w-md mx-auto">
-                    This certifies that a voluntary philanthropic contribution of <strong>৳{calcDonationAmount.toLocaleString()}</strong> has been officially credited to the humanitarian funds of <em>{TRUST_NAME}</em>. This receipt qualifies for tax rebate under the Sixth Schedule of the Income Tax Act, 2023.
+                    This certifies that a voluntary philanthropic contribution of <strong>৳{calcDonationAmount.toLocaleString()}</strong> has been officially credited to the humanitarian funds of <em>{content.general.trustName}</em>. This receipt qualifies for tax rebate under the Sixth Schedule of the Income Tax Act, 2023.
                   </div>
                 </div>
 

@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { TRUST_PILLARS } from '../data/mockData';
 import { Pillar } from '../types';
+import { useContent } from '../context/ContentContext';
 
 interface PillarsGridProps {
   onOpenDonate: (causeName?: string) => void;
@@ -50,13 +51,14 @@ const iconMap: Record<string, React.ElementType> = {
 };
 
 export const PillarsGrid: React.FC<PillarsGridProps> = ({ onOpenDonate, onOpenShare }) => {
+  const { content, isAdminLoggedIn, openAdminTab } = useContent();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activePillarModal, setActivePillarModal] = useState<Pillar | null>(null);
 
   const categories = ['All', 'Education', 'Health', 'Welfare', 'Empowerment', 'Global & Society'];
 
-  const filteredPillars = TRUST_PILLARS.filter((pillar) => {
+  const filteredPillars = content.pillars.filter((pillar) => {
     const matchesCategory = selectedCategory === 'All' || pillar.category === selectedCategory;
     const matchesSearch = 
       pillar.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -72,11 +74,22 @@ export const PillarsGrid: React.FC<PillarsGridProps> = ({ onOpenDonate, onOpenSh
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
           <div className="max-w-2xl">
-            <div className="text-xs uppercase tracking-widest font-semibold text-emerald-800 mb-2">
-              Humanitarian Mandate
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs uppercase tracking-widest font-semibold text-emerald-800">
+                Humanitarian Mandate
+              </span>
+              {isAdminLoggedIn && (
+                <button
+                  onClick={() => openAdminTab('pillars')}
+                  className="text-[10px] font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-300"
+                >
+                  <Sparkles className="w-3 h-3" />
+                  <span>Edit Pillars CMS</span>
+                </button>
+              )}
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-stone-900 tracking-tight">
-              16 Core Areas of Action & Social Transformation
+              {content.pillars.length} Core Areas of Action & Social Transformation
             </h2>
             <p className="mt-2 text-sm sm:text-base text-stone-600">
               Each pillar operates with specialized field teams, transparent allocation, and community-led monitoring across Bangladesh.

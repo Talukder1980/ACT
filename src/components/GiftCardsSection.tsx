@@ -32,6 +32,7 @@ import { GIFT_CARD_TIERS, TRUST_NAME, TRUST_MOTTO, TRUST_ESTABLISHED } from '../
 import { GiftCardTier, PurchasedGiftCard } from '../types';
 import { generateQrDataUrl } from '../utils/qrGenerator';
 import { TrustLogo } from './TrustLogo';
+import { useContent } from '../context/ContentContext';
 
 interface GiftCardsSectionProps {
   onOpenShare: (title: string, text: string) => void;
@@ -46,8 +47,10 @@ const RECENT_COMMUNITY_GIFTS = [
 ];
 
 export const GiftCardsSection: React.FC<GiftCardsSectionProps> = ({ onOpenShare }) => {
+  const { content, isAdminLoggedIn, openAdminTab } = useContent();
+  const giftCardTiers = content.giftCards;
   // Selected Tier (default $25)
-  const [selectedTier, setSelectedTier] = useState<GiftCardTier>(GIFT_CARD_TIERS[2]);
+  const [selectedTier, setSelectedTier] = useState<GiftCardTier>(giftCardTiers[2] || GIFT_CARD_TIERS[2]);
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
   
   // Checkout Form State
@@ -190,9 +193,20 @@ export const GiftCardsSection: React.FC<GiftCardsSectionProps> = ({ onOpenShare 
         
         {/* Dedicated Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-100 text-rose-900 border border-rose-200 text-xs font-bold mb-3 shadow-xs">
-            <Gift className="w-4 h-4 text-rose-600" />
-            <span>Dedicated Philanthropic Gifting Pavilion</span>
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-100 text-rose-900 border border-rose-200 text-xs font-bold shadow-xs">
+              <Gift className="w-4 h-4 text-rose-600" />
+              <span>Dedicated Philanthropic Gifting Pavilion</span>
+            </div>
+            {isAdminLoggedIn && (
+              <button
+                onClick={() => openAdminTab('giftcards')}
+                className="text-[10px] font-bold text-rose-900 hover:text-rose-950 flex items-center gap-1 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-300"
+              >
+                <Gift className="w-3 h-3" />
+                <span>Edit Gift Cards CMS</span>
+              </button>
+            )}
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-stone-900 tracking-tight leading-tight">
             Humanitarian Gift Cards: Gifts That Dignify & Transform
@@ -236,7 +250,7 @@ export const GiftCardsSection: React.FC<GiftCardsSectionProps> = ({ onOpenShare 
 
         {/* Six Cards Grid in Six Different Colors & Unique Fonts */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-16">
-          {GIFT_CARD_TIERS.map((tier) => {
+          {giftCardTiers.map((tier) => {
             return (
               <div
                 key={tier.id}
@@ -336,7 +350,7 @@ export const GiftCardsSection: React.FC<GiftCardsSectionProps> = ({ onOpenShare 
               </h4>
             </div>
             <button
-              onClick={() => handleOpenPurchase(GIFT_CARD_TIERS[5])}
+              onClick={() => handleOpenPurchase(giftCardTiers[giftCardTiers.length - 1] || giftCardTiers[0])}
               className="px-5 py-2.5 bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold rounded-xl transition-colors shrink-0 shadow-xs flex items-center gap-2"
             >
               <Award className="w-4 h-4 text-amber-400" />
@@ -652,7 +666,7 @@ export const GiftCardsSection: React.FC<GiftCardsSectionProps> = ({ onOpenShare 
                     1. Choose or Change Gift Card Tier (6 Distinct Options)
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-                    {GIFT_CARD_TIERS.map(t => (
+                    {giftCardTiers.map(t => (
                       <button
                         type="button"
                         key={t.id}
